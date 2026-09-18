@@ -1,0 +1,156 @@
+/*
+ * Basis-Styles. Mobil zuerst, Touch-Ziele mindestens 44 px.
+ * Systemschriften statt Webfonts: keine externen Requests.
+ */
+
+:root {
+  --farbe-hintergrund: #f7f8fb;
+  --farbe-flaeche: #ffffff;
+  --farbe-text: #1a1d23;
+  --farbe-text-leise: #545a66;
+  --farbe-akzent: #1d4ed8;
+  --farbe-rand: #d9dde6;
+  --radius: 14px;
+  --abstand: 16px;
+  --touch-ziel: 44px;
+  --dauer-kurz: 150ms;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --farbe-hintergrund: #14161b;
+    --farbe-flaeche: #1e2128;
+    --farbe-text: #f2f4f8;
+    --farbe-text-leise: #a8afbd;
+    --farbe-akzent: #7ba2ff;
+    --farbe-rand: #2f3440;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--farbe-hintergrund);
+  color: var(--farbe-text);
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-size: 17px;
+  line-height: 1.55;
+  -webkit-text-size-adjust: 100%;
+}
+
+.app {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: calc(var(--abstand) * 1.5) var(--abstand) calc(var(--abstand) * 3);
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--abstand) * 1.5);
+}
+
+.app__header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  letter-spacing: -0.01em;
+}
+
+.app__subtitle {
+  margin: 4px 0 0;
+  color: var(--farbe-text-leise);
+}
+
+.card {
+  background: var(--farbe-flaeche);
+  border: 1px solid var(--farbe-rand);
+  border-radius: var(--radius);
+  padding: var(--abstand);
+}
+
+.card h2 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+}
+
+.card p {
+  margin: 0;
+  color: var(--farbe-text-leise);
+}
+
+.topic-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topic-list__item {
+  width: 100%;
+  min-height: var(--touch-ziel);
+  padding: 14px var(--abstand);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--farbe-flaeche);
+  border: 1px solid var(--farbe-rand);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color var(--dauer-kurz) ease, transform var(--dauer-kurz) ease;
+}
+
+.topic-list__item:hover,
+.topic-list__item:focus-visible {
+  border-color: var(--farbe-akzent);
+}
+
+.topic-list__item:active {
+  transform: scale(0.99);
+}
+
+.topic-list__title {
+  font-weight: 600;
+}
+
+.topic-list__description {
+  color: var(--farbe-text-leise);
+  font-size: 0.95rem;
+}
+
+:focus-visible {
+  outline: 3px solid var(--farbe-akzent);
+  outline-offset: 2px;
+}
+
+.app__footer {
+  color: var(--farbe-text-leise);
+  font-size: 0.9rem;
+}
+
+.app__footer p {
+  margin: 0;
+}
+
+/* Bewegung ist immer abschaltbar - Systemeinstellung wird respektiert. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
