@@ -24,6 +24,8 @@ Vor jedem Commit laufen `npm run lint`, `npm test` und `npm run build`.
 - `src/learning/` - deterministischer Zufall und die Übungsschleife als reine
   Funktionen, ohne React.
 - `src/topics/` - ein Ordner je Thema, registriert in `src/topics/index.ts`.
+  Daneben die gemeinsamen Bausteine: `antwort.ts` (Eingaben lesen),
+  `aufgabe.ts` (Aufgaben bauen), `fehlermuster.ts` (Katalog).
 - `src/ui/` - React-Komponenten ohne eigene Rechen-Logik.
 - `docs/FEHLERMUSTER.md` - erkannte Fehlermuster und die passenden
   Rückmeldungen. Ein Test hält Code und Doku zusammen.

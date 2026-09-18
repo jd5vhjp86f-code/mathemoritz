@@ -7,8 +7,16 @@
 
 import type { TopicModule } from './types.ts';
 import { bruecheKuerzen } from './brueche-kuerzen/index.ts';
+import { bruecheAddieren } from './brueche-addieren/index.ts';
+import { bruecheMultiplizieren } from './brueche-multiplizieren/index.ts';
+import { bruecheDividieren } from './brueche-dividieren/index.ts';
 
-export const topics: readonly TopicModule[] = [bruecheKuerzen];
+export const topics: readonly TopicModule[] = [
+  bruecheKuerzen,
+  bruecheAddieren,
+  bruecheMultiplizieren,
+  bruecheDividieren,
+];
 
 /** Liefert ein Thema oder `undefined`, wenn die ID unbekannt ist. */
 export function getTopic(id: string): TopicModule | undefined {
@@ -25,3 +33,5 @@ export type {
   TopicModule,
 } from './types.ts';
 export { LEVELS } from './types.ts';
+export { FEHLERMUSTER, istBekanntesFehlermuster } from './fehlermuster.ts';
+export type { Fehlermuster } from './fehlermuster.ts';

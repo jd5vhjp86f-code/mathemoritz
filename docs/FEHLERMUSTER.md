@@ -182,28 +182,187 @@ neuer Nenner geteilt durch alten Nenner."
 
 ---
 
-## Geplant
+---
 
-Diese Muster gehören zu Themen, die noch nicht gebaut sind. Sie stehen hier,
-damit die Rückmeldungen später zusammenpassen.
+## Addieren und Subtrahieren
 
-### `nenner-addiert` (Phase 3)
+### `nenner-addiert`
 
-Beim Addieren wurden Zähler und Nenner getrennt addiert, statt einen
-Hauptnenner zu bilden. Beispiel: 1/2 + 1/3 wird zu 2/5.
+**Beschreibung:** Zähler und Nenner wurden getrennt addiert, statt einen
+Hauptnenner zu bilden. Der wichtigste Fehler des ganzen Themas.
 
-### `kehrwert-vergessen` (Phase 3)
+**Beispiel:** 1/2 + 1/3 wird zu 2/5.
 
-Beim Dividieren wurde direkt multipliziert, ohne den zweiten Bruch umzudrehen.
-Beispiel: 2/3 : 4/5 wird zu 8/15.
+**Rückmeldung:** „Du hast die Nenner mitaddiert. Nenner werden nie addiert –
+bring beide Brüche zuerst auf den Hauptnenner 6."
 
-### `gemischte-zahl-falsch-umgewandelt` (Phase 3)
+### `nenner-subtrahiert`
 
-Der ganze Anteil wurde nicht mit dem Nenner multipliziert. Beispiel: 2 3/4 wird
-zu 5/4 statt 11/4.
+**Beschreibung:** Dasselbe beim Minus.
 
-### `komma-als-punkt` (Phase 4)
+**Beispiel:** 3/4 − 1/3 wird zu 2/1.
 
-Eine Dezimalzahl wurde mit Punkt statt Komma eingegeben. Wird stillschweigend
-akzeptiert, damit die Tastatur kein Hindernis ist; die richtige Schreibweise
-steht danach in der Lösung. `core/fraction.ts` liest beides bereits ein.
+**Rückmeldung:** „Du hast die Nenner mitsubtrahiert. Nenner werden nie
+subtrahiert – bring beide Brüche zuerst auf den Hauptnenner 12."
+
+### `nicht-gleichnamig-gemacht`
+
+**Beschreibung:** Die Zähler wurden verrechnet und einer der alten Nenner
+einfach übernommen.
+
+**Beispiel:** 1/2 + 1/3 wird zu 2/2 oder 2/3.
+
+**Rückmeldung:** „Die Nenner sind noch verschieden. Erweitere beide Brüche erst
+auf 6, dann darfst du die Zähler verrechnen."
+
+### `nur-einen-bruch-erweitert`
+
+**Beschreibung:** Ein Bruch wurde auf den Hauptnenner gebracht, der andere
+blieb stehen.
+
+**Beispiel:** 1/4 + 3/8: erweitert zu 2/8, dann aber 2/8 + 3 = 5/8 statt
+2/8 + 3/8.
+
+**Rückmeldung:** „Ein Bruch ist schon auf 8 erweitert, der andere noch nicht.
+Beide müssen umgerechnet werden."
+
+### `hauptnenner-stimmt-zaehler-nicht`
+
+**Beschreibung:** Der Hauptnenner ist richtig gefunden, beim Zähler ist etwas
+schiefgegangen. Der halbe Weg stimmt und wird ausdrücklich gelobt.
+
+**Beispiel:** 1/6 + 3/8 wird zu 12/24 statt 13/24.
+
+**Rückmeldung:** „Der Hauptnenner 24 stimmt – gut. Rechne die Zähler noch
+einmal nach."
+
+### `rechenzeichen-vertauscht`
+
+**Beschreibung:** Es wurde addiert, obwohl ein Minus dasteht, oder umgekehrt.
+
+**Rückmeldung:** „Hier steht ein Minus. Du hast addiert."
+
+### `minuend-subtrahend-vertauscht`
+
+**Beschreibung:** Beim Subtrahieren wurde andersherum gerechnet, das Ergebnis
+ist die Gegenzahl.
+
+**Beispiel:** 1/4 − 3/4 statt 3/4 − 1/4.
+
+**Rückmeldung:** „Du hast andersherum gerechnet. Vom ersten Bruch wird
+abgezogen: 3/4 minus 1/4."
+
+---
+
+## Hauptnenner bestimmen
+
+### `nenner-multipliziert-statt-kgv`
+
+**Beschreibung:** Die Nenner wurden multipliziert. Das ergibt einen gemeinsamen
+Nenner, aber nicht den kleinsten.
+
+**Beispiel:** Hauptnenner von 4 und 6: 24 statt 12.
+
+**Rückmeldung:** „24 ist die Nenner mal genommen. Das geht zwar auf, ist aber
+nicht der kleinste gemeinsame Nenner – der ist 12."
+
+### `gemeinsames-vielfaches-nicht-kleinstes`
+
+**Beschreibung:** Die Zahl ist durch beide Nenner teilbar, aber nicht die
+kleinste solche Zahl.
+
+**Beispiel:** Hauptnenner von 4 und 6: 36 statt 12.
+
+**Rückmeldung:** „36 ist durch beide Nenner teilbar – richtig gedacht. Gesucht
+ist aber das kleinste, und das ist 12."
+
+### `hauptnenner-kein-vielfaches`
+
+**Beschreibung:** Die genannte Zahl ist nicht durch beide Nenner teilbar.
+
+**Beispiel:** Hauptnenner von 4 und 6: 10.
+
+**Rückmeldung:** „10 lässt sich nicht durch 4 teilen. Der Hauptnenner muss
+durch beide Nenner teilbar sein."
+
+---
+
+## Multiplizieren
+
+### `ueber-kreuz-multipliziert`
+
+**Beschreibung:** Über Kreuz gerechnet – das ist die Regel fürs Dividieren.
+
+**Beispiel:** 2/3 · 4/5 wird zu 10/12.
+
+**Rückmeldung:** „Du hast über Kreuz gerechnet – so geht Dividieren. Beim
+Multiplizieren bleiben Zähler oben und Nenner unten."
+
+### `nenner-nicht-multipliziert`
+
+**Beschreibung:** Nur die Zähler wurden multipliziert, ein Nenner blieb stehen.
+
+**Beispiel:** 2/3 · 4/5 wird zu 8/3.
+
+**Rückmeldung:** „Die Zähler stimmen. Die Nenner müssen auch multipliziert
+werden: 3 · 5 = 15."
+
+### `zaehler-nicht-multipliziert`
+
+**Beschreibung:** Nur die Nenner wurden multipliziert.
+
+**Beispiel:** 2/3 · 4/5 wird zu 2/15.
+
+**Rückmeldung:** „Die Nenner stimmen. Die Zähler müssen auch multipliziert
+werden: 2 · 4 = 8."
+
+### `summe-statt-produkt`
+
+**Beschreibung:** Statt zu multiplizieren wurde addiert.
+
+**Rückmeldung:** „Hier steht ein Malzeichen. Du hast addiert – und dafür
+brauchst du hier auch keinen Hauptnenner."
+
+---
+
+## Dividieren
+
+### `kehrwert-vergessen`
+
+**Beschreibung:** Direkt multipliziert, ohne den zweiten Bruch umzudrehen.
+
+**Beispiel:** 2/3 : 4/5 wird zu 8/15.
+
+**Rückmeldung:** „Du hast direkt multipliziert. Beim Dividieren drehst du den
+zweiten Bruch zuerst um: aus 4/5 wird 5/4."
+
+### `ersten-bruch-gestuerzt`
+
+**Beschreibung:** Der erste statt des zweiten Bruchs wurde umgedreht.
+
+**Beispiel:** 2/3 : 4/5 wird zu 3/2 · 4/5 = 12/10.
+
+**Rückmeldung:** „Du hast den ersten Bruch umgedreht. Umgedreht wird der zweite
+– der, durch den geteilt wird."
+
+### `beide-brueche-gestuerzt`
+
+**Beschreibung:** Beide Brüche wurden umgedreht.
+
+**Rückmeldung:** „Du hast beide Brüche umgedreht. Nur der zweite wird
+umgedreht, der erste bleibt, wie er ist."
+
+---
+
+## Noch nicht umgesetzt
+
+Diese Fehler gehören zu Themen, die noch nicht gebaut sind. Sie stehen hier,
+damit die Rückmeldungen später zusammenpassen. Sie haben bewusst keine eigene
+Überschrift mit ID – der Test prüft, dass jede ID im Katalog auch eine
+Beschreibung hat, und umgekehrt.
+
+- **gemischte Zahl falsch umgewandelt** (Phase 4): Der ganze Anteil wurde nicht
+  mit dem Nenner multipliziert. Beispiel: 2 3/4 wird zu 5/4 statt 11/4.
+- **Komma als Punkt** (Phase 4): Eine Dezimalzahl wurde mit Punkt statt Komma
+  eingegeben. Wird stillschweigend akzeptiert, damit die Tastatur kein Hindernis
+  ist; `core/fraction.ts` liest beides bereits ein.

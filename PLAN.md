@@ -22,6 +22,8 @@ src/
   core/      exakte Mathematik und Formatierung, ohne UI-Bezug
   learning/  Zufall, Übungsschleife, Fortschritt, Wiederholung
   topics/    ein Ordner je Thema, registriert in topics/index.ts
+             daneben die gemeinsamen Bausteine: types, antwort,
+             aufgabe, fehlermuster
   ui/        React-Komponenten, möglichst ohne eigene Logik
 docs/        FEHLERMUSTER.md und weitere Doku
 ```
@@ -58,14 +60,27 @@ Nach jeder Phase wird gestoppt und zusammengefasst.
 - Antwort-Eingabe als zwei Felder (Zähler, Nenner) mit Zahlentastatur.
 - 17 Fehlermuster in `docs/FEHLERMUSTER.md`; ein Test vergleicht Code und Doku.
 
-### Phase 3 - Rechnen mit Brüchen
+### Phase 3 - Rechnen mit Brüchen (abgeschlossen)
 
-- `topics/brueche-addieren/` (gleichnamig und ungleichnamig, Hauptnenner).
-- `topics/brueche-multiplizieren/` und `topics/brueche-dividieren/` (Kehrwert).
-- Gestufte Hilfen: Tipp, Zwischenschritt, vollständiger Rechenweg.
-- Fehlermuster-Erkennung, z. B. Nenner addiert statt Hauptnenner gebildet.
+- `topics/brueche-addieren/`: gleichnamig (Stufe 1), ein Nenner Vielfaches des
+  anderen (Stufe 2), echter Hauptnenner (Stufe 3). Addition und Subtraktion,
+  dazu die Variante „Welchen Hauptnenner brauchst du?".
+- `topics/brueche-multiplizieren/` und `topics/brueche-dividieren/`, jeweils
+  auch mit einer ganzen Zahl als zweitem Faktor bzw. Divisor.
+- Gemeinsame Bausteine unter `topics/`: `antwort.ts` liest Eingaben,
+  `aufgabe.ts` baut Aufgaben der Form „a ∘ b", `fehlermuster.ts` ist der
+  Katalog aller Muster.
+- 34 Fehlermuster. Ein Test prüft drei Richtungen: jede ID ist dokumentiert,
+  jede dokumentierte ID steht im Katalog, und jede ID ist mit einer echten
+  Falschantwort auch erreichbar.
+- `topics/generatoren.test.ts` prüft Eigenschaften für jedes registrierte
+  Thema. Neue Themen erben diese Prüfungen automatisch.
 
 ### Phase 4 - Dezimalzahlen und Umwandlungen
+
+Die Rechenkerne dafür stehen schon: `decimalExpansion`, `hasTerminatingDecimal`
+und `roundToDigits` in `core/fraction.ts`, die Periodenschreibweise in
+`core/format.ts`.
 
 - `topics/bruch-dezimal/`: Bruch zu Dezimalzahl und zurück, inklusive Periode.
 - Darstellung mit Periodenstrich in der Formelansicht.
@@ -104,3 +119,6 @@ die Anzeige zu tauschen, kein Themen-Modul.
   wird nach Phase 5 anhand des Unterrichtsstands entschieden.
 - Ob die Stufe automatisch mitwächst oder von Hand gewählt bleibt, entscheidet
   Phase 5. Bis dahin wählt der Schüler selbst.
+- Ob die Browser-Prüfung (Playwright) fest ins Repository und in die CI kommt.
+  Bisher läuft sie von Hand. Dafür käme eine schwere Abhängigkeit und ein
+  Browser-Schritt in die CI dazu - das ist eine eigene Entscheidung.
