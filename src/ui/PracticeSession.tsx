@@ -1,4 +1,5 @@
 import type { Level, TopicModule } from '../topics/types.ts';
+import type { FortschrittSteuerung } from './useFortschritt.ts';
 import { LEVELS } from '../topics/types.ts';
 import { tippsUebrig } from '../learning/session.ts';
 import { useSession } from './useSession.ts';
@@ -13,6 +14,8 @@ interface Props {
    * Ab Phase 5 kann hier stehen, wo der Schüler zuletzt war.
    */
   readonly startLevel?: Level | undefined;
+  /** Ohne Fortschritt wird nur gewürfelt und nichts gespeichert. */
+  readonly fortschritt?: FortschrittSteuerung | undefined;
 }
 
 const STUFEN_NAMEN: Readonly<Record<Level, string>> = {
@@ -22,8 +25,12 @@ const STUFEN_NAMEN: Readonly<Record<Level, string>> = {
 };
 
 /** Die Übungsschleife: Aufgabe, Eingabe, Rückmeldung, nächste Aufgabe. */
-export function PracticeSession({ topic, onBack, startLevel = 1 }: Props) {
-  const { state, eingeben, pruefenJetzt, tipp, loesung, weiter, stufe } = useSession(topic, startLevel);
+export function PracticeSession({ topic, onBack, startLevel = 1, fortschritt }: Props) {
+  const { state, eingeben, pruefenJetzt, tipp, loesung, weiter, stufe, rat } = useSession(
+    topic,
+    startLevel,
+    fortschritt,
+  );
   const { task, result, phase } = state;
   const fertig = phase !== 'eingabe';
 
@@ -78,6 +85,23 @@ export function PracticeSession({ topic, onBack, startLevel = 1 }: Props) {
             <span className={result.correct ? 'rueckmeldung--gut' : 'rueckmeldung--hinweis'}>{result.feedback}</span>
           ) : null}
         </p>
+
+        {rat.art === 'bleiben' || !fertig ? null : (
+          <p className="rat">
+            {rat.art === 'aufsteigen'
+              ? `Das sitzt. Willst du ${STUFEN_NAMEN[rat.ziel]} probieren?`
+              : `Gerade ist es knifflig. Magst du es mit ${STUFEN_NAMEN[rat.ziel]} versuchen?`}{' '}
+            <button
+              type="button"
+              className="knopf knopf--klein"
+              onClick={() => {
+                stufe(rat.ziel);
+              }}
+            >
+              Zu {STUFEN_NAMEN[rat.ziel]}
+            </button>
+          </p>
+        )}
 
         {state.hintsShown > 0 ? (
           <ul className="tipps">

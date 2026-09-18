@@ -94,12 +94,31 @@ Die Rechenkerne dafür standen schon seit Phase 1: `decimalExpansion`,
   Klassiker, aber sechs Ziffern abzutippen ist keine Übung im Bruchrechnen.
 - 44 Fehlermuster.
 
-### Phase 5 - Lernfortschritt
+### Phase 5 - Lernfortschritt (abgeschlossen)
 
-- `learning/`: Auswahl der nächsten Aufgabe nach Fehlerquote, Wiederholung
-  nach Abstand (spaced repetition), Stufenaufstieg.
-- Speicherung in IndexedDB, rein lokal, mit Export und Löschfunktion.
-- Uebersicht: was sitzt, was wackelt.
+- `learning/fortschritt.ts`: Leitner-Boxen je Baustein (eine Variante eines
+  Themas auf einer Stufe). Auf Anhieb richtig heißt eine Box weiter, mit Tipp
+  bleibt sie stehen, aufgelöst geht eine zurück. Ruhezeiten: 0, 1, 3, 7 und
+  14 Tage.
+- `learning/auswahl.ts`: erst Ungeübtes, dann Fälliges (das Wackeligste
+  zuerst), sonst das, was am längsten her ist. Derselbe Baustein kommt nie
+  zweimal hintereinander.
+- Der Themen-Vertrag kennt jetzt `variants(level)`, und `generate` nimmt
+  optional eine Variante entgegen. Erst dadurch kann die Lernsteuerung gezielt
+  das üben lassen, was noch wackelt.
+- Stufenaufstieg wird geraten, nicht verordnet: Aufstieg erst, wenn jeder
+  Baustein der Stufe mindestens Box 3 erreicht hat; Abstieg wird nach drei
+  Fehlschlägen in Folge nur vorgeschlagen. Die Stufenknöpfe bleiben.
+- `learning/speicher.ts`: IndexedDB, rein lokal, mit strenger Prüfung beim
+  Laden. Einzelne kaputte Einträge werden übersprungen, nicht der ganze
+  Fortschritt verworfen. Ohne IndexedDB wird im Arbeitsspeicher gehalten.
+- Übersicht mit Export als Datei und zweistufigem Löschen.
+
+Beim Löschen kam ein echter Fehler ans Licht: Die App meldete „gelöscht",
+bevor die lokale Datenbank es war. Wer sofort neu lud, hatte seine Daten
+wieder. Jetzt bleibt eine Verbindung offen, es wird auf den Abschluss der
+Transaktion gewartet, und die Ansicht bestätigt erst danach. Bei einer
+Löschfunktion ist das keine Feinheit.
 
 ### Phase 6 - Feinschliff
 
@@ -125,8 +144,6 @@ die Anzeige zu tauschen, kein Themen-Modul.
 
 - Umfang der Themen über das Bruchrechnen hinaus (Prozent, Terme, Gleichungen)
   wird nach Phase 5 anhand des Unterrichtsstands entschieden.
-- Ob die Stufe automatisch mitwächst oder von Hand gewählt bleibt, entscheidet
-  Phase 5. Bis dahin wählt der Schüler selbst.
 - Ob die Browser-Prüfung (Playwright) fest ins Repository und in die CI kommt.
   Bisher läuft sie von Hand. Dafür käme eine schwere Abhängigkeit und ein
   Browser-Schritt in die CI dazu - das ist eine eigene Entscheidung.

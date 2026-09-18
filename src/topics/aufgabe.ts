@@ -9,7 +9,7 @@
 import type { ExpressionPart, Level, OperatorSymbol, Task } from './types.ts';
 import type { Fraction } from '../core/fraction.ts';
 import { formatFractionText } from '../core/format.ts';
-import { randomInt } from '../learning/random.ts';
+import { pick, randomInt } from '../learning/random.ts';
 
 /** Rechenzeichen in Worten, damit Screenreader die Aufgabe vorlesen können. */
 const IN_WORTEN: Readonly<Record<OperatorSymbol, string>> = {
@@ -91,4 +91,21 @@ export function aufgabenId(
 ): string {
   const kern = zahlen.map((z) => z.toString()).join('-');
   return `${topicId}-${variant}-${kern}-${randomInt(random, 0, 0xffffff).toString(36)}`;
+}
+
+/**
+ * Wählt die Variante: die gewünschte, sofern sie auf dieser Stufe vorkommt,
+ * sonst eine zufällige.
+ *
+ * Eine unbekannte Variante ist kein Fehler - der Fortschritt kann Einträge aus
+ * einer früheren Fassung enthalten, und dafür soll niemand eine Fehlermeldung
+ * sehen.
+ */
+export function waehleVariante<T extends string>(
+  erlaubt: readonly T[],
+  gewuenscht: string | undefined,
+  random: () => number,
+): T {
+  const treffer = erlaubt.find((variante) => variante === gewuenscht);
+  return treffer ?? pick(random, erlaubt);
 }

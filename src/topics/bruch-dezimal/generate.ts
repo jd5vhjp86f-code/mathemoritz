@@ -23,7 +23,7 @@ import {
   roundToDigits,
 } from '../../core/fraction.ts';
 import { formatDecimalSpoken, formatDecimalText, formatFractionText } from '../../core/format.ts';
-import { aufgabenId } from '../aufgabe.ts';
+import { aufgabenId, waehleVariante } from '../aufgabe.ts';
 import { pick, randomInt } from '../../learning/random.ts';
 
 export const TOPIC_ID = 'bruch-dezimal';
@@ -100,9 +100,9 @@ const CONFIG: Readonly<Record<Level, LevelConfig>> = {
   },
 };
 
-export function generate(level: Level, random: () => number): Task {
+export function generate(level: Level, random: () => number, gewuenscht?: string): Task {
   const config = CONFIG[level];
-  const variant = pick(random, config.variants);
+  const variant = waehleVariante(config.variants, gewuenscht, random);
 
   switch (variant) {
     case 'bruch-zu-dezimal':
@@ -315,4 +315,9 @@ export function levelBounds(level: Level): { readonly maxNenner: number; readonl
   );
   const grenze = Math.max(10 ** meisteStellen, 10 ** MAX_PERIODENLAENGE);
   return { maxNenner: grenze, maxZaehler: grenze };
+}
+
+/** Die Varianten dieser Stufe. */
+export function variants(level: Level): readonly string[] {
+  return CONFIG[level].variants;
 }

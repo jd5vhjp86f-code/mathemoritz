@@ -116,8 +116,16 @@ export interface TopicModule {
   readonly title: string;
   /** Ein Satz, was hier geübt wird. */
   readonly description: string;
-  /** Erzeugt eine Aufgabe. `random` liefert Werte in [0, 1). */
-  generate(level: Level, random: () => number): Task;
+  /** Die Varianten, die auf dieser Stufe vorkommen können. */
+  variants(level: Level): readonly string[];
+  /**
+   * Erzeugt eine Aufgabe. `random` liefert Werte in [0, 1).
+   *
+   * Mit `variant` lässt sich gezielt eine Variante anfordern - so kann die
+   * Lernsteuerung genau das üben lassen, was noch wackelt. Ist die Variante auf
+   * dieser Stufe unbekannt, wird wie sonst gewürfelt.
+   */
+  generate(level: Level, random: () => number, variant?: string): Task;
   /** Prüft eine Eingabe gegen die Aufgabe. */
   check(task: Task, input: string): CheckResult;
 }

@@ -4,6 +4,7 @@ import type { Level, Task } from '../topics/types.ts';
 import { bruecheKuerzen } from '../topics/brueche-kuerzen/index.ts';
 import { createRandom } from './random.ts';
 import {
+  ergebnisVon,
   loesungZeigen,
   naechsteAufgabe,
   pruefen,
@@ -37,7 +38,7 @@ describe('Start', () => {
     expect(state.input).toBe('');
     expect(state.result).toBeNull();
     expect(state.hintsShown).toBe(0);
-    expect(state.stats).toEqual({ gestellt: 0, richtig: 0, aufAnhieb: 0, streak: 0, besteStreak: 0 });
+    expect(state.stats).toEqual({ gestellt: 0, richtig: 0, aufAnhieb: 0, streak: 0, besteStreak: 0, fehlserie: 0 });
   });
 });
 
@@ -174,5 +175,37 @@ describe('Durchgehende Runde', () => {
         },
       ),
     );
+  });
+});
+
+describe('Ergebnis einer Aufgabe', () => {
+  it('meldet erst, wenn die Aufgabe abgeschlossen ist', () => {
+    const state = start();
+    expect(ergebnisVon(state)).toBeNull();
+    expect(ergebnisVon(pruefen(setInput(state, '999/1000'), topic))).toBeNull();
+  });
+
+  it('unterscheidet auf Anhieb, mit Hilfe und aufgelöst', () => {
+    const state = start();
+    expect(ergebnisVon(pruefen(setInput(state, loesungAls(state.task)), topic))).toBe('aufAnhieb');
+
+    const mitTipp = tippZeigen(state);
+    expect(ergebnisVon(pruefen(setInput(mitTipp, loesungAls(state.task)), topic))).toBe('mitHilfe');
+
+    const nachFehler = pruefen(setInput(state, '999/1000'), topic);
+    expect(ergebnisVon(pruefen(setInput(nachFehler, loesungAls(state.task)), topic))).toBe('mitHilfe');
+
+    expect(ergebnisVon(loesungZeigen(state))).toBe('aufgeloest');
+  });
+
+  it('zählt Fehlschläge in Folge und setzt sie bei Erfolg zurück', () => {
+    let state = loesungZeigen(start(1));
+    expect(state.stats.fehlserie).toBe(1);
+    state = loesungZeigen(naechsteAufgabe(state, aufgabe(2)));
+    expect(state.stats.fehlserie).toBe(2);
+
+    const dritte = naechsteAufgabe(state, aufgabe(3));
+    const geloest = pruefen(setInput(dritte, loesungAls(dritte.task)), topic);
+    expect(geloest.stats.fehlserie).toBe(0);
   });
 });

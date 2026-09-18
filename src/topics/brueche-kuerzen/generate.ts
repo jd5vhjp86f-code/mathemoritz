@@ -10,6 +10,7 @@
 import type { ExpressionPart, Level, Task } from '../types.ts';
 import { fraction, gcd } from '../../core/fraction.ts';
 import { formatFractionText } from '../../core/format.ts';
+import { waehleVariante } from '../aufgabe.ts';
 import { pick, randomInt } from '../../learning/random.ts';
 
 export const TOPIC_ID = 'brueche-kuerzen';
@@ -70,9 +71,9 @@ export function levelBounds(level: Level): LevelBounds {
 }
 
 /** Erzeugt eine Aufgabe der gewählten Stufe. */
-export function generate(level: Level, random: () => number): Task {
+export function generate(level: Level, random: () => number, gewuenscht?: string): Task {
   const config = CONFIG[level];
-  const variant = pick(random, config.variants);
+  const variant = waehleVariante(config.variants, gewuenscht, random);
 
   const d = randomInt(random, config.denominator[0], config.denominator[1]);
   const n = pick(random, coprimeNumerators(d, d * config.numeratorFactor));
@@ -249,4 +250,9 @@ function coprimeNumerators(d: number, max: number): number[] {
     }
   }
   return result;
+}
+
+/** Die Varianten dieser Stufe. */
+export function variants(level: Level): readonly string[] {
+  return CONFIG[level].variants;
 }

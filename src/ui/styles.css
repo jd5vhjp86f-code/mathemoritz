@@ -477,3 +477,124 @@ body {
   opacity: 0.45;
   cursor: default;
 }
+
+/* --- Fortschritt ------------------------------------------------- */
+
+.fortschritt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand);
+}
+
+.themenstand {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.themenstand__eintrag {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.themenstand__titel {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.themenstand__zeile {
+  margin: 0;
+  color: var(--farbe-text-leise);
+  font-size: 0.9rem;
+}
+
+.balken {
+  display: flex;
+  gap: 3px;
+  height: 12px;
+}
+
+.balken__teil {
+  border-radius: 6px;
+  min-width: 8px;
+}
+
+.balken__teil--sitzt {
+  background: #15803d;
+}
+
+.balken__teil--kommt {
+  background: var(--farbe-akzent);
+}
+
+.balken__teil--wackelt {
+  background: #d97706;
+}
+
+.balken__teil--neu {
+  background: var(--farbe-rand);
+}
+
+@media (prefers-color-scheme: dark) {
+  .balken__teil--sitzt {
+    background: #4ade80;
+  }
+
+  .balken__teil--wackelt {
+    background: #fbbf24;
+  }
+}
+
+.daten p {
+  margin: 0 0 12px;
+  color: var(--farbe-text-leise);
+  font-size: 0.95rem;
+}
+
+.daten h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+
+.knopf--warnung {
+  color: #fff;
+  background: #b91c1c;
+  border-color: #b91c1c;
+  font-weight: 600;
+}
+
+.topic-list__stand {
+  color: var(--farbe-akzent);
+  font-size: 0.85rem;
+}
+
+/* --- Stufenrat --------------------------------------------------- */
+
+.rat {
+  margin: 0;
+  padding: 12px;
+  background: var(--farbe-hintergrund);
+  border-radius: 10px;
+  color: var(--farbe-text-leise);
+  font-size: 0.95rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.knopf--klein {
+  min-height: var(--touch-ziel);
+  padding: 0 14px;
+  font-size: 0.95rem;
+}
+
+.loeschstand {
+  margin: 0 0 12px;
+  color: var(--farbe-text);
+  font-weight: 600;
+}

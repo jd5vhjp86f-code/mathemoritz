@@ -7,6 +7,7 @@
  */
 
 import type { CheckResult, Level, Task, TopicModule } from '../topics/types.ts';
+import type { Ergebnis } from './fortschritt.ts';
 
 /** Wo die Runde gerade steht. */
 export type Phase =
@@ -27,6 +28,8 @@ export interface SessionStats {
   /** Aktuelle Serie auf Anhieb richtiger Aufgaben. */
   readonly streak: number;
   readonly besteStreak: number;
+  /** Aufgaben in Folge, bei denen die Lösung gezeigt werden musste. */
+  readonly fehlserie: number;
 }
 
 export interface SessionState {
@@ -50,6 +53,7 @@ const LEERE_STATS: SessionStats = {
   aufAnhieb: 0,
   streak: 0,
   besteStreak: 0,
+  fehlserie: 0,
 };
 
 /** Startet eine Runde mit der ersten Aufgabe. */
@@ -101,6 +105,7 @@ export function pruefen(state: SessionState, topic: TopicModule): SessionState {
       aufAnhieb: state.stats.aufAnhieb + (aufAnhieb ? 1 : 0),
       streak,
       besteStreak: Math.max(state.stats.besteStreak, streak),
+      fehlserie: 0,
     },
   };
 }
@@ -127,6 +132,7 @@ export function loesungZeigen(state: SessionState): SessionState {
       ...state.stats,
       gestellt: state.stats.gestellt + 1,
       streak: 0,
+      fehlserie: state.stats.fehlserie + 1,
     },
   };
 }
@@ -147,4 +153,16 @@ export function naechsteAufgabe(state: SessionState, task: Task): SessionState {
 /** Wechselt die Stufe und beginnt sofort mit einer passenden Aufgabe. */
 export function stufeWechseln(state: SessionState, level: Level, task: Task): SessionState {
   return { ...naechsteAufgabe(state, task), level };
+}
+
+/**
+ * Wie die gerade abgeschlossene Aufgabe ausgegangen ist.
+ *
+ * `null`, solange noch gerechnet wird. Die Lernsteuerung schreibt damit den
+ * Fortschritt fort.
+ */
+export function ergebnisVon(state: SessionState): Ergebnis | null {
+  if (state.phase === 'aufgeloest') return 'aufgeloest';
+  if (state.phase !== 'geloest') return null;
+  return state.versuche === 1 && state.hintsShown === 0 ? 'aufAnhieb' : 'mitHilfe';
 }

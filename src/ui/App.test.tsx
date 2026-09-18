@@ -10,6 +10,8 @@ import { bruecheKuerzen } from '../topics/brueche-kuerzen/index.ts';
 import { bruchDezimal } from '../topics/bruch-dezimal/index.ts';
 import { fraction } from '../core/fraction.ts';
 import { createRandom } from '../learning/random.ts';
+import { FortschrittAnsicht } from './Fortschritt.tsx';
+import { LEERER_FORTSCHRITT, aktualisiere } from '../learning/fortschritt.ts';
 import { DecimalView } from './DecimalView.tsx';
 import { AnswerInput } from './AnswerInput.tsx';
 
@@ -206,5 +208,98 @@ describe('Knöpfe bei einer Auswahl', () => {
       />,
     );
     expect(markup).toContain('Prüfen');
+  });
+});
+
+describe('Fortschritts-Ansicht', () => {
+  function leer() {
+    /* im Test ohne Wirkung */
+  }
+
+  const geuebt = (() => {
+    let stand = LEERER_FORTSCHRITT;
+    const baustein = { topicId: 'brueche-kuerzen', variant: 'kuerzen', level: 1 } as const;
+    for (let i = 0; i < 3; i += 1) stand = aktualisiere(stand, baustein, 'aufAnhieb', Date.now());
+    return stand;
+  })();
+
+  it('nennt jedes Thema', () => {
+    const markup = renderToStaticMarkup(
+      <FortschrittAnsicht fortschritt={LEERER_FORTSCHRITT} onBack={leer} onLoeschen={leer} />,
+    );
+    for (const topic of topics) {
+      expect(markup).toContain(topic.title);
+    }
+  });
+
+  it('sagt zu Beginn, dass es noch nichts zu sehen gibt', () => {
+    const markup = renderToStaticMarkup(
+      <FortschrittAnsicht fortschritt={LEERER_FORTSCHRITT} onBack={leer} onLoeschen={leer} />,
+    );
+    expect(markup).toContain('bald');
+    // Ohne Daten gibt es nichts zu sichern und nichts zu löschen.
+    expect(markup.match(/disabled/g)?.length).toBe(2);
+  });
+
+  it('zeigt nach dem Üben Zahlen und schaltet Sichern frei', () => {
+    const markup = renderToStaticMarkup(
+      <FortschrittAnsicht fortschritt={geuebt} onBack={leer} onLoeschen={leer} />,
+    );
+    expect(markup).toContain('3 von 3');
+    expect(markup).toContain('sitzt');
+    expect(markup).not.toContain('disabled');
+  });
+
+  it('sagt klar, dass nichts das Gerät verlässt', () => {
+    const markup = renderToStaticMarkup(
+      <FortschrittAnsicht fortschritt={geuebt} onBack={leer} onLoeschen={leer} />,
+    );
+    expect(markup).toContain('auf diesem Gerät');
+    expect(markup).toContain('Nichts wird hochgeladen');
+  });
+
+  it('beschreibt den Balken für Screenreader', () => {
+    const markup = renderToStaticMarkup(
+      <FortschrittAnsicht fortschritt={geuebt} onBack={leer} onLoeschen={leer} />,
+    );
+    expect(markup).toContain('role="img"');
+    expect(markup).toContain('noch nicht geübt');
+  });
+
+  it('fragt vor dem Löschen nicht sofort, sondern zeigt erst den Knopf', () => {
+    const markup = renderToStaticMarkup(
+      <FortschrittAnsicht fortschritt={geuebt} onBack={leer} onLoeschen={leer} />,
+    );
+    expect(markup).toContain('Fortschritt löschen');
+    expect(markup).not.toContain('Ja, alles löschen');
+  });
+});
+
+describe('Themenliste mit Stand', () => {
+  it('zeigt den Stand erst, wenn geübt wurde', () => {
+    const ohne = renderToStaticMarkup(
+      <TopicList
+        topics={topics}
+        fortschritt={LEERER_FORTSCHRITT}
+        onSelect={() => {
+          /* im Test ohne Wirkung */
+        }}
+      />,
+    );
+    expect(ohne).not.toContain('topic-list__stand');
+
+    let stand = LEERER_FORTSCHRITT;
+    stand = aktualisiere(stand, { topicId: 'brueche-kuerzen', variant: 'kuerzen', level: 1 }, 'aufAnhieb', Date.now());
+    const mit = renderToStaticMarkup(
+      <TopicList
+        topics={topics}
+        fortschritt={stand}
+        onSelect={() => {
+          /* im Test ohne Wirkung */
+        }}
+      />,
+    );
+    expect(mit).toContain('topic-list__stand');
+    expect(mit).toContain('Aufgabenarten sitzen');
   });
 });
