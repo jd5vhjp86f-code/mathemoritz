@@ -6,12 +6,22 @@
  */
 
 import type { TopicModule } from './types.ts';
+import { bruecheKuerzen } from './brueche-kuerzen/index.ts';
 
-export const topics: readonly TopicModule[] = [];
+export const topics: readonly TopicModule[] = [bruecheKuerzen];
 
 /** Liefert ein Thema oder `undefined`, wenn die ID unbekannt ist. */
 export function getTopic(id: string): TopicModule | undefined {
   return topics.find((topic) => topic.id === id);
 }
 
-export type { AnswerKind, CheckResult, Level, Task, TopicModule } from './types.ts';
+export type {
+  AnswerKind,
+  AnswerRequirement,
+  CheckResult,
+  ExpressionPart,
+  Level,
+  Task,
+  TopicModule,
+} from './types.ts';
+export { LEVELS } from './types.ts';

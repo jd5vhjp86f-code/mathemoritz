@@ -154,3 +154,277 @@ body {
     scroll-behavior: auto !important;
   }
 }
+
+/* --- Übung ------------------------------------------------------- */
+
+.uebung {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand);
+}
+
+.uebung__kopf {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.uebung__titel {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+/* Der Zurueck-Knopf darf nie umbrechen, sonst zerfaellt die Kopfzeile. */
+.uebung__kopf .knopf--leise {
+  flex: 0 0 auto;
+  padding: 0 10px 0 0;
+  white-space: nowrap;
+}
+
+.stufen {
+  display: flex;
+  gap: 8px;
+}
+
+.stufen__knopf {
+  flex: 1;
+  min-height: var(--touch-ziel);
+  padding: 0 12px;
+  font: inherit;
+  color: var(--farbe-text-leise);
+  background: var(--farbe-flaeche);
+  border: 1px solid var(--farbe-rand);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.stufen__knopf--aktiv {
+  color: #fff;
+  background: var(--farbe-akzent);
+  border-color: var(--farbe-akzent);
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .stufen__knopf--aktiv {
+    color: #10131a;
+  }
+}
+
+.statistik {
+  margin: 0;
+  color: var(--farbe-text-leise);
+  font-size: 0.95rem;
+}
+
+.aufgabe {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand);
+}
+
+.aufgabe__anweisung {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+/* --- Formeln ----------------------------------------------------- */
+
+.formel {
+  margin: 0;
+  padding: 8px 0;
+}
+
+.formel__zeile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.bruch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.bruch__stapel {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bruch__zaehler,
+.bruch__nenner {
+  padding: 0 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+.bruch__strich {
+  width: 100%;
+  min-width: 1.4em;
+  height: 2px;
+  background: currentColor;
+}
+
+.bruch__luecke {
+  color: var(--farbe-akzent);
+}
+
+.zahl {
+  font-variant-numeric: tabular-nums;
+}
+
+.operator {
+  color: var(--farbe-text-leise);
+}
+
+.luecke {
+  color: var(--farbe-akzent);
+}
+
+.formel__text {
+  font-size: 1rem;
+}
+
+/* --- Antwort ----------------------------------------------------- */
+
+.antwort {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.antwort__label {
+  color: var(--farbe-text-leise);
+  font-size: 0.95rem;
+}
+
+.antwort__bruch {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.antwort__strich {
+  width: 5rem;
+  height: 2px;
+  background: currentColor;
+}
+
+.antwort__feld {
+  min-height: var(--touch-ziel);
+  width: 8rem;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 1.3rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: var(--farbe-text);
+  background: var(--farbe-hintergrund);
+  border: 2px solid var(--farbe-rand);
+  border-radius: 10px;
+}
+
+.antwort__feld:disabled {
+  opacity: 0.6;
+}
+
+.antwort__feld--bruch {
+  width: 5rem;
+}
+
+/* --- Rückmeldung und Hilfen -------------------------------------- */
+
+.rueckmeldung {
+  margin: 0;
+  min-height: 1.6em;
+  text-align: center;
+}
+
+.rueckmeldung--gut {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.rueckmeldung--hinweis {
+  color: var(--farbe-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  .rueckmeldung--gut {
+    color: #4ade80;
+  }
+}
+
+.tipps,
+.rechenweg ol {
+  margin: 0;
+  padding-left: 1.3em;
+  color: var(--farbe-text-leise);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rechenweg h4 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+}
+
+.rechenweg {
+  padding: 12px;
+  background: var(--farbe-hintergrund);
+  border-radius: 10px;
+}
+
+/* --- Knöpfe ------------------------------------------------------ */
+
+.knoepfe {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.knopf {
+  min-height: var(--touch-ziel);
+  padding: 0 18px;
+  font: inherit;
+  color: var(--farbe-text);
+  background: var(--farbe-flaeche);
+  border: 1px solid var(--farbe-rand);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background-color var(--dauer-kurz) ease, border-color var(--dauer-kurz) ease;
+}
+
+.knopf:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.knopf--haupt {
+  flex: 1;
+  min-width: 8rem;
+  color: #fff;
+  background: var(--farbe-akzent);
+  border-color: var(--farbe-akzent);
+  font-weight: 600;
+}
+
+@media (prefers-color-scheme: dark) {
+  .knopf--haupt {
+    color: #10131a;
+  }
+}
+
+.knopf--leise {
+  color: var(--farbe-text-leise);
+  background: transparent;
+  border-color: transparent;
+}

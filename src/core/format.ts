@@ -1,16 +1,16 @@
 /**
- * Deutsche Schreibweise fuer die Anzeige.
+ * Deutsche Schreibweise für die Anzeige.
  *
- * Hier wird ausschliesslich formatiert, nie gerechnet. Die Mathematik steckt
+ * Hier wird ausschließlich formatiert, nie gerechnet. Die Mathematik steckt
  * in `core/fraction.ts`. Zwei Ausgabeformen:
  *   - `...Text`  : schlichter Text (Eingabefelder, Vorlesen, Tests)
- *   - `...Latex` : LaTeX fuer die Formeldarstellung (Periodenstrich)
+ *   - `...Latex` : LaTeX für die Formeldarstellung (Periodenstrich)
  */
 
 import type { DecimalExpansion, Fraction } from './fraction.ts';
 import { decimalExpansion, roundToDigits, toMixed } from './fraction.ts';
 
-/** Kombinierender Overline-Strich fuer die Periode in reinem Text. */
+/** Kombinierender Overline-Strich für die Periode in reinem Text. */
 const COMBINING_OVERLINE = String.fromCodePoint(0x0305);
 
 /** "3/4", "-3/4", "5" (bei Nenner 1). */
@@ -47,7 +47,7 @@ export function formatMixedLatex(f: Fraction): string {
 
 /**
  * Exakte Dezimalzahl in deutscher Schreibweise, Periode mit Overline-Zeichen:
- * 5/6 -> "0,83" mit U+0305 hinter der 3 (die 3 traegt den Strich).
+ * 5/6 -> "0,83" mit U+0305 hinter der 3 (die 3 trägt den Strich).
  */
 export function formatDecimalText(f: Fraction): string {
   const e = decimalExpansion(f);
@@ -59,7 +59,7 @@ export function formatDecimalText(f: Fraction): string {
 
 /**
  * Exakte Dezimalzahl als LaTeX. Das Komma steht in Klammern, damit LaTeX es
- * nicht als Aufzaehlungszeichen setzt: 5/6 -> "0{,}8\\overline{3}".
+ * nicht als Aufzählungszeichen setzt: 5/6 -> "0{,}8\\overline{3}".
  */
 export function formatDecimalLatex(f: Fraction): string {
   const e = decimalExpansion(f);
@@ -72,7 +72,7 @@ export function formatDecimalLatex(f: Fraction): string {
 
 /**
  * Gerundete Dezimalzahl in deutscher Schreibweise, mit fester Stellenzahl.
- * Gerundet wird exakt ueber Brueche, nicht ueber Floats.
+ * Gerundet wird exakt über Brüche, nicht über Floats.
  */
 export function formatDecimalRounded(f: Fraction, digits: number): string {
   const rounded = roundToDigits(f, digits);

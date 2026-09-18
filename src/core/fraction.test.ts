@@ -39,21 +39,21 @@ import {
 } from './fraction.ts';
 import { FractionError } from './fraction.ts';
 
-/** Erzeugt beliebige Brueche mit Nenner != 0. */
+/** Erzeugt beliebige Brüche mit Nenner != 0. */
 const arbFraction = fc
   .tuple(fc.bigInt({ min: -10_000n, max: 10_000n }), fc.bigInt({ min: 1n, max: 10_000n }))
   .map(([n, d]) => fraction(n, d));
 
-/** Brueche ohne die 0 (fuer Division und Kehrwert). */
+/** Brüche ohne die 0 (für Division und Kehrwert). */
 const arbNonZeroFraction = arbFraction.filter((f) => f.n !== 0n);
 
 describe('Konstruktion', () => {
-  it('haelt den Nenner positiv', () => {
+  it('hält den Nenner positiv', () => {
     expect(fraction(3n, -4n)).toEqual({ n: -3n, d: 4n });
     expect(fraction(-3n, -4n)).toEqual({ n: 3n, d: 4n });
   });
 
-  it('kuerzt nicht automatisch', () => {
+  it('kürzt nicht automatisch', () => {
     expect(fraction(6n, 8n)).toEqual({ n: 6n, d: 8n });
   });
 
@@ -74,7 +74,7 @@ describe('Konstruktion', () => {
 });
 
 describe('Eigenschaften', () => {
-  it('erkennt echte und unechte Brueche', () => {
+  it('erkennt echte und unechte Brüche', () => {
     expect(isProper(fraction(3n, 4n))).toBe(true);
     expect(isProper(fraction(-3n, 4n))).toBe(true);
     expect(isImproper(fraction(7n, 4n))).toBe(true);
@@ -86,7 +86,7 @@ describe('Eigenschaften', () => {
     expect(isInteger(fraction(7n, 4n))).toBe(false);
   });
 
-  it('erkennt vollstaendig gekuerzte Brueche', () => {
+  it('erkennt vollständig gekürzte Brüche', () => {
     expect(isFullyReduced(fraction(3n, 4n))).toBe(true);
     expect(isFullyReduced(fraction(6n, 8n))).toBe(false);
     expect(isFullyReduced(fraction(0n, 5n))).toBe(false);
@@ -100,14 +100,14 @@ describe('Eigenschaften', () => {
   });
 });
 
-describe('Kuerzen und Erweitern', () => {
-  it('kuerzt vollstaendig', () => {
+describe('Kürzen und Erweitern', () => {
+  it('kürzt vollständig', () => {
     expect(kuerzen(fraction(6n, 8n))).toEqual({ n: 3n, d: 4n });
     expect(kuerzen(fraction(-6n, 8n))).toEqual({ n: -3n, d: 4n });
     expect(kuerzen(fraction(0n, 8n))).toEqual({ n: 0n, d: 1n });
   });
 
-  it('erweitert ohne den Wert zu aendern', () => {
+  it('erweitert ohne den Wert zu ändern', () => {
     const f = fraction(3n, 4n);
     expect(erweitern(f, 5n)).toEqual({ n: 15n, d: 20n });
     expect(equals(erweitern(f, 5n), f)).toBe(true);
@@ -118,7 +118,7 @@ describe('Kuerzen und Erweitern', () => {
     expect(() => erweitern(fraction(1n, 2n), -3n)).toThrow(FractionError);
   });
 
-  it('Kuerzen aendert den Wert nie (Property)', () => {
+  it('Kürzen ändert den Wert nie (Property)', () => {
     fc.assert(
       fc.property(arbFraction, (f) => {
         expect(equals(kuerzen(f), f)).toBe(true);
@@ -127,7 +127,7 @@ describe('Kuerzen und Erweitern', () => {
     );
   });
 
-  it('Erweitern und anschliessendes Kuerzen ergibt den Ausgangswert (Property)', () => {
+  it('Erweitern und anschließendes Kürzen ergibt den Ausgangswert (Property)', () => {
     fc.assert(
       fc.property(arbFraction, fc.bigInt({ min: 1n, max: 500n }), (f, k) => {
         expect(isSameRepresentation(kuerzen(erweitern(f, k)), kuerzen(f))).toBe(true);
@@ -148,12 +148,12 @@ describe('Grundrechenarten', () => {
     expect(div(fraction(2n, 3n), fraction(4n, 5n))).toEqual({ n: 5n, d: 6n });
   });
 
-  it('haelt bei Division durch 0 an', () => {
+  it('hält bei Division durch 0 an', () => {
     expect(() => div(fraction(1n, 2n), ZERO)).toThrow(FractionError);
     expect(() => kehrwert(ZERO)).toThrow(FractionError);
   });
 
-  it('liefert gekuerzte Ergebnisse (Property)', () => {
+  it('liefert gekürzte Ergebnisse (Property)', () => {
     fc.assert(
       fc.property(arbFraction, arbFraction, (a, b) => {
         expect(isFullyReduced(add(a, b))).toBe(true);
@@ -163,7 +163,7 @@ describe('Grundrechenarten', () => {
     );
   });
 
-  it('haelt den Nenner immer positiv (Property)', () => {
+  it('hält den Nenner immer positiv (Property)', () => {
     fc.assert(
       fc.property(arbFraction, arbNonZeroFraction, (a, b) => {
         expect(add(a, b).d > 0n).toBe(true);
@@ -190,7 +190,7 @@ describe('Grundrechenarten', () => {
     );
   });
 
-  it('Dividieren heisst mit dem Kehrwert multiplizieren (Property)', () => {
+  it('Dividieren heißt mit dem Kehrwert multiplizieren (Property)', () => {
     fc.assert(
       fc.property(arbFraction, arbNonZeroFraction, (a, b) => {
         expect(equals(div(a, b), mul(a, kehrwert(b)))).toBe(true);
@@ -222,7 +222,7 @@ describe('Grundrechenarten', () => {
 });
 
 describe('Vergleichen', () => {
-  it('vergleicht ueber Kreuz', () => {
+  it('vergleicht über Kreuz', () => {
     expect(compare(fraction(1n, 3n), fraction(1n, 2n))).toBe(-1);
     expect(compare(fraction(3n, 4n), fraction(6n, 8n))).toBe(0);
     expect(compare(fraction(-1n, 2n), fraction(-1n, 3n))).toBe(-1);
@@ -238,7 +238,7 @@ describe('Vergleichen', () => {
     expect(max(fraction(1n, 3n), fraction(1n, 2n))).toEqual({ n: 1n, d: 2n });
   });
 
-  it('ist mit der Subtraktion vertraeglich (Property)', () => {
+  it('ist mit der Subtraktion verträglich (Property)', () => {
     fc.assert(
       fc.property(arbFraction, arbFraction, (a, b) => {
         expect(compare(a, b)).toBe(signum(sub(a, b)));
@@ -255,7 +255,7 @@ describe('Hauptnenner', () => {
     expect(lcm(0n, 6n)).toBe(0n);
   });
 
-  it('findet den Hauptnenner mehrerer Brueche', () => {
+  it('findet den Hauptnenner mehrerer Brüche', () => {
     expect(hauptnenner([fraction(1n, 4n), fraction(1n, 6n), fraction(1n, 8n)])).toBe(24n);
   });
 
@@ -263,7 +263,7 @@ describe('Hauptnenner', () => {
     expect(() => hauptnenner([])).toThrow(FractionError);
   });
 
-  it('macht Brueche gleichnamig ohne den Wert zu aendern', () => {
+  it('macht Brüche gleichnamig ohne den Wert zu ändern', () => {
     const input = [fraction(1n, 4n), fraction(1n, 6n)];
     const result = gleichnamigMachen(input);
     expect(result).toEqual([
@@ -277,7 +277,7 @@ describe('Hauptnenner', () => {
     });
   });
 
-  it('gleichnamig machen erhaelt alle Werte (Property)', () => {
+  it('gleichnamig machen erhält alle Werte (Property)', () => {
     fc.assert(
       fc.property(fc.array(arbFraction, { minLength: 1, maxLength: 5 }), (fractions) => {
         const result = gleichnamigMachen(fractions);
@@ -346,7 +346,7 @@ describe('Umwandlungen', () => {
     );
   });
 
-  it('rundet kaufmaennisch und exakt', () => {
+  it('rundet kaufmännisch und exakt', () => {
     expect(roundToDigits(fraction(2n, 3n), 2)).toEqual({ n: 67n, d: 100n });
     expect(roundToDigits(fraction(1n, 2n), 0)).toEqual({ n: 1n, d: 1n });
     expect(roundToDigits(fraction(-1n, 2n), 0)).toEqual({ n: -1n, d: 1n });
@@ -370,7 +370,7 @@ describe('Parsen', () => {
     expect(parseDecimal('1,2,3')).toBeNull();
   });
 
-  it('liest Brueche und gemischte Zahlen', () => {
+  it('liest Brüche und gemischte Zahlen', () => {
     expect(parseFraction('3/4')).toEqual({ n: 3n, d: 4n });
     expect(parseFraction('-3/4')).toEqual({ n: -3n, d: 4n });
     expect(parseFraction('3 / 4')).toEqual({ n: 3n, d: 4n });
@@ -379,7 +379,7 @@ describe('Parsen', () => {
     expect(parseFraction('2,25')).toEqual({ n: 225n, d: 100n });
   });
 
-  it('gibt bei Nenner 0 null zurueck statt zu werfen', () => {
+  it('gibt bei Nenner 0 null zurück statt zu werfen', () => {
     expect(parseFraction('3/0')).toBeNull();
     expect(parseFraction('1 2/0')).toBeNull();
   });

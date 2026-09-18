@@ -2,22 +2,22 @@
  * Exakte Bruchrechnung auf Basis von `bigint`.
  *
  * Projektregel: Für Mathe-Logik werden niemals Floats benutzt. Jede Rechnung
- * im Trainer laeuft ueber dieses Modul. Dezimalzahlen entstehen erst bei der
+ * im Trainer läuft über dieses Modul. Dezimalzahlen entstehen erst bei der
  * Anzeige (siehe `decimalExpansion` und `core/format.ts`).
  *
  * Invarianten eines `Fraction`:
  *   - `d` ist niemals 0
- *   - `d` ist immer positiv; das Vorzeichen steckt im Zaehler `n`
- *   - der Bruch ist NICHT automatisch gekuerzt
+ *   - `d` ist immer positiv; das Vorzeichen steckt im Zähler `n`
+ *   - der Bruch ist NICHT automatisch gekürzt
  *
- * Absicht hinter "nicht automatisch gekuerzt": Didaktisch brauchen wir den
- * Unterschied zwischen 6/8 und 3/4. Aufgaben wie "Kuerze 6/8" waeren sonst
- * nicht darstellbar. Rechenoperationen (add, mul, ...) liefern aber gekuerzte
- * Ergebnisse, weil das die uebliche Erwartung an ein Resultat ist.
+ * Absicht hinter "nicht automatisch gekürzt": Didaktisch brauchen wir den
+ * Unterschied zwischen 6/8 und 3/4. Aufgaben wie "Kürze 6/8" wären sonst
+ * nicht darstellbar. Rechenoperationen (add, mul, ...) liefern aber gekürzte
+ * Ergebnisse, weil das die übliche Erwartung an ein Resultat ist.
  */
 
 export interface Fraction {
-  /** Zaehler, traegt das Vorzeichen. */
+  /** Zähler, trägt das Vorzeichen. */
   readonly n: bigint;
   /** Nenner, immer > 0. */
   readonly d: bigint;
@@ -25,13 +25,13 @@ export interface Fraction {
 
 /** Gemischte Zahl, z. B. 2 3/4 -> { whole: 2n, n: 3n, d: 4n }. */
 export interface MixedNumber {
-  /** Ganzzahliger Anteil, traegt das Vorzeichen (ausser er ist 0). */
+  /** Ganzzahliger Anteil, trägt das Vorzeichen (außer er ist 0). */
   readonly whole: bigint;
-  /** Zaehler des Restbruchs, immer >= 0. */
+  /** Zähler des Restbruchs, immer >= 0. */
   readonly n: bigint;
   /** Nenner des Restbruchs, immer > 0. */
   readonly d: bigint;
-  /** true, wenn der Gesamtwert negativ ist (noetig fuer -0 1/2). */
+  /** true, wenn der Gesamtwert negativ ist (nötig für -0 1/2). */
   readonly negative: boolean;
 }
 
@@ -66,7 +66,7 @@ export function absBigInt(value: bigint): bigint {
   return value < 0n ? -value : value;
 }
 
-/** Groesster gemeinsamer Teiler, immer >= 0. ggT(0, 0) = 0. */
+/** Größter gemeinsamer Teiler, immer >= 0. ggT(0, 0) = 0. */
 export function gcd(a: bigint, b: bigint): bigint {
   let x = absBigInt(a);
   let y = absBigInt(b);
@@ -90,13 +90,13 @@ export function lcm(a: bigint, b: bigint): bigint {
 /* ------------------------------------------------------------------ */
 
 /**
- * Baut einen Bruch. Das Vorzeichen wandert in den Zaehler, der Nenner wird
- * positiv. Es wird bewusst nicht gekuerzt.
+ * Baut einen Bruch. Das Vorzeichen wandert in den Zähler, der Nenner wird
+ * positiv. Es wird bewusst nicht gekürzt.
  *
  * @throws {FractionError} wenn der Nenner 0 ist.
  */
 export function fraction(n: bigint | number, d: bigint | number = 1n): Fraction {
-  const num = toBigInt(n, 'Zaehler');
+  const num = toBigInt(n, 'Zähler');
   const den = toBigInt(d, 'Nenner');
   if (den === 0n) {
     throw new FractionError('Ein Nenner darf nicht 0 sein.');
@@ -110,20 +110,20 @@ export function fromInt(value: bigint | number): Fraction {
 }
 
 /**
- * Bruch aus einer gemischten Zahl. `whole` traegt das Vorzeichen; fuer Werte
- * zwischen -1 und 0 (z. B. -0 1/2) wird zusaetzlich `negative` gebraucht.
+ * Bruch aus einer gemischten Zahl. `whole` trägt das Vorzeichen; für Werte
+ * zwischen -1 und 0 (z. B. -0 1/2) wird zusätzlich `negative` gebraucht.
  *
- * @throws {FractionError} bei Nenner 0 oder negativem Zaehler-Anteil.
+ * @throws {FractionError} bei Nenner 0 oder negativem Zähler-Anteil.
  */
 export function fromMixed(whole: bigint | number, n: bigint | number, d: bigint | number, negative?: boolean): Fraction {
   const w = toBigInt(whole, 'ganzer Anteil');
-  const num = toBigInt(n, 'Zaehler');
+  const num = toBigInt(n, 'Zähler');
   const den = toBigInt(d, 'Nenner');
   if (den <= 0n) {
     throw new FractionError('Der Nenner einer gemischten Zahl muss positiv sein.');
   }
   if (num < 0n) {
-    throw new FractionError('Der Zaehler einer gemischten Zahl darf nicht negativ sein.');
+    throw new FractionError('Der Zähler einer gemischten Zahl darf nicht negativ sein.');
   }
   const isNegative = negative ?? w < 0n;
   const magnitude = absBigInt(w) * den + num;
@@ -160,34 +160,34 @@ export function isInteger(f: Fraction): boolean {
   return f.n % f.d === 0n;
 }
 
-/** Echter Bruch: Betrag des Zaehlers kleiner als der Nenner. */
+/** Echter Bruch: Betrag des Zählers kleiner als der Nenner. */
 export function isProper(f: Fraction): boolean {
   return absBigInt(f.n) < f.d;
 }
 
-/** Unechter Bruch: Betrag des Zaehlers groesser oder gleich dem Nenner. */
+/** Unechter Bruch: Betrag des Zählers größer oder gleich dem Nenner. */
 export function isImproper(f: Fraction): boolean {
   return !isProper(f);
 }
 
-/** true, wenn der Bruch vollstaendig gekuerzt ist. */
+/** true, wenn der Bruch vollständig gekürzt ist. */
 export function isFullyReduced(f: Fraction): boolean {
   if (f.n === 0n) return f.d === 1n;
   return gcd(f.n, f.d) === 1n;
 }
 
 /* ------------------------------------------------------------------ */
-/* Kuerzen und Erweitern                                               */
+/* Kürzen und Erweitern                                               */
 /* ------------------------------------------------------------------ */
 
-/** Kuerzt vollstaendig. 0 wird zu 0/1. */
+/** Kürzt vollständig. 0 wird zu 0/1. */
 export function kuerzen(f: Fraction): Fraction {
   if (f.n === 0n) return ZERO;
   const g = gcd(f.n, f.d);
   return { n: f.n / g, d: f.d / g };
 }
 
-/** Alias fuer `kuerzen` in technischen Kontexten. */
+/** Alias für `kuerzen` in technischen Kontexten. */
 export const normalize = kuerzen;
 
 /**
@@ -198,7 +198,7 @@ export const normalize = kuerzen;
 export function erweitern(f: Fraction, factor: bigint | number): Fraction {
   const k = toBigInt(factor, 'Faktor');
   if (k <= 0n) {
-    throw new FractionError('Zum Erweitern braucht es einen Faktor groesser als 0.');
+    throw new FractionError('Zum Erweitern braucht es einen Faktor größer als 0.');
   }
   return { n: f.n * k, d: f.d * k };
 }
@@ -207,23 +207,23 @@ export function erweitern(f: Fraction, factor: bigint | number): Fraction {
 /* Grundrechenarten                                                    */
 /* ------------------------------------------------------------------ */
 
-/** Summe, gekuerzt. */
+/** Summe, gekürzt. */
 export function add(a: Fraction, b: Fraction): Fraction {
   return kuerzen({ n: a.n * b.d + b.n * a.d, d: a.d * b.d });
 }
 
-/** Differenz, gekuerzt. */
+/** Differenz, gekürzt. */
 export function sub(a: Fraction, b: Fraction): Fraction {
   return kuerzen({ n: a.n * b.d - b.n * a.d, d: a.d * b.d });
 }
 
-/** Produkt, gekuerzt. */
+/** Produkt, gekürzt. */
 export function mul(a: Fraction, b: Fraction): Fraction {
   return kuerzen({ n: a.n * b.n, d: a.d * b.d });
 }
 
 /**
- * Quotient, gekuerzt. Dividieren heisst mit dem Kehrwert multiplizieren.
+ * Quotient, gekürzt. Dividieren heißt mit dem Kehrwert multiplizieren.
  *
  * @throws {FractionError} bei Division durch 0.
  */
@@ -314,7 +314,7 @@ export function max(a: Fraction, b: Fraction): Fraction {
 export function hauptnenner(fractions: readonly Fraction[]): bigint {
   const first = fractions[0];
   if (first === undefined) {
-    throw new FractionError('Fuer einen Hauptnenner braucht es mindestens einen Bruch.');
+    throw new FractionError('Für einen Hauptnenner braucht es mindestens einen Bruch.');
   }
   let result = first.d;
   for (let i = 1; i < fractions.length; i += 1) {
@@ -326,7 +326,7 @@ export function hauptnenner(fractions: readonly Fraction[]): bigint {
   return result;
 }
 
-/** Bringt alle Brueche auf den Hauptnenner, ohne zu kuerzen. */
+/** Bringt alle Brüche auf den Hauptnenner, ohne zu kuerzen. */
 export function gleichnamigMachen(fractions: readonly Fraction[]): Fraction[] {
   const hn = hauptnenner(fractions);
   return fractions.map((f) => ({ n: f.n * (hn / f.d), d: hn }));
@@ -389,15 +389,15 @@ export function hasTerminatingDecimal(f: Fraction): boolean {
 }
 
 /**
- * Naeherungswert als `number`. AUSSCHLIESSLICH fuer Anzeige, Sortierung in
- * Diagrammen o. ae. — niemals fuer Mathe-Logik oder Antwortpruefung.
+ * Näherungswert als `number`. AUSSCHLIESSLICH für Anzeige, Sortierung in
+ * Diagrammen o. ae. — niemals für Mathe-Logik oder Antwortprüfung.
  */
 export function toApproximateNumber(f: Fraction): number {
   return Number(f.n) / Number(f.d);
 }
 
 /**
- * Rundet kaufmaennisch (ab 5 aufrunden, weg von der Null) auf `digits`
+ * Rundet kaufmännisch (ab 5 aufrunden, weg von der Null) auf `digits`
  * Nachkommastellen und liefert wieder einen exakten Bruch.
  *
  * @throws {FractionError} bei negativer Stellenzahl.
@@ -424,7 +424,7 @@ const MIXED_PATTERN = /^([+-]?)(\d+)\s+(\d+)\s*\/\s*(\d+)$/;
 
 /**
  * Liest eine deutsche Dezimalzahl exakt ein ("2,25" -> 9/4). Punkt wird als
- * Dezimaltrennzeichen mit akzeptiert, damit Tippfehler nicht zu Frust fuehren.
+ * Dezimaltrennzeichen mit akzeptiert, damit Tippfehler nicht zu Frust führen.
  * Liefert `null`, wenn die Eingabe keine Dezimalzahl ist.
  */
 export function parseDecimal(input: string): Fraction | null {
@@ -442,7 +442,7 @@ export function parseDecimal(input: string): Fraction | null {
 
 /**
  * Liest "3/4", "-3/4", "2 3/4" oder "2,25" ein. Liefert `null`, wenn nichts
- * davon passt oder der Nenner 0 waere.
+ * davon passt oder der Nenner 0 wäre.
  */
 export function parseFraction(input: string): Fraction | null {
   const text = input.trim();

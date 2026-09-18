@@ -12,13 +12,13 @@ import {
 } from './format.ts';
 
 describe('Bruch-Darstellung', () => {
-  it('schreibt Brueche als Text', () => {
+  it('schreibt Brüche als Text', () => {
     expect(formatFractionText(fraction(3n, 4n))).toBe('3/4');
     expect(formatFractionText(fraction(-3n, 4n))).toBe('-3/4');
     expect(formatFractionText(fraction(5n, 1n))).toBe('5');
   });
 
-  it('schreibt Brueche als LaTeX', () => {
+  it('schreibt Brüche als LaTeX', () => {
     expect(formatFractionLatex(fraction(3n, 4n))).toBe('\\frac{3}{4}');
     expect(formatFractionLatex(fraction(-3n, 4n))).toBe('-\\frac{3}{4}');
     expect(formatFractionLatex(fraction(5n, 1n))).toBe('5');
@@ -65,7 +65,7 @@ describe('Dezimal-Darstellung', () => {
     expect(formatDecimalRounded(fraction(7n, 1n), 2)).toBe('7,00');
   });
 
-  it('abbrechende Dezimalzahlen lassen sich exakt zurueckl esen (Property)', () => {
+  it('abbrechende Dezimalzahlen lassen sich exakt zurücklesen (Property)', () => {
     fc.assert(
       fc.property(fc.bigInt({ min: -99_999n, max: 99_999n }), fc.integer({ min: 0, max: 4 }), (n, digits) => {
         const value = fraction(n, 10n ** BigInt(digits));
