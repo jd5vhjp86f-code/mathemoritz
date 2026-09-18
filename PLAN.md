@@ -76,15 +76,23 @@ Nach jeder Phase wird gestoppt und zusammengefasst.
 - `topics/generatoren.test.ts` prüft Eigenschaften für jedes registrierte
   Thema. Neue Themen erben diese Prüfungen automatisch.
 
-### Phase 4 - Dezimalzahlen und Umwandlungen
+### Phase 4 - Dezimalzahlen und Umwandlungen (abgeschlossen)
 
-Die Rechenkerne dafür stehen schon: `decimalExpansion`, `hasTerminatingDecimal`
-und `roundToDigits` in `core/fraction.ts`, die Periodenschreibweise in
-`core/format.ts`.
+Die Rechenkerne dafür standen schon seit Phase 1: `decimalExpansion`,
+`hasTerminatingDecimal` und `roundToDigits` in `core/fraction.ts`.
 
-- `topics/bruch-dezimal/`: Bruch zu Dezimalzahl und zurück, inklusive Periode.
-- Darstellung mit Periodenstrich in der Formelansicht.
-- Runden und Größenvergleich.
+- `topics/bruch-dezimal/` mit fünf Varianten: Bruch zu Dezimalzahl,
+  Dezimalzahl zu Bruch, Runden, Periode ablesen, Größenvergleich.
+- Zwei neue Antwortarten im Themen-Vertrag: `decimal` (Zahlentastatur mit
+  Komma) und `choice` (große Knöpfe, hier für `<`, `=`, `>`). Bei einer Auswahl
+  ist das Antippen zugleich die Abgabe; der Prüfen-Knopf entfällt.
+- Periodenstrich in der Formelansicht über CSS statt über das kombinierende
+  Unicode-Zeichen, das je nach Schrift verschluckt wird oder schief sitzt.
+  Für Screenreader steht daneben `formatDecimalSpoken`: „0,8 Periode 3".
+- Aufgaben mit Periode werden beim Laden gefiltert: keine Periode, die mit 0
+  beginnt, und höchstens drei Ziffern. 1/7 = 0,142857… wäre ein schöner
+  Klassiker, aber sechs Ziffern abzutippen ist keine Übung im Bruchrechnen.
+- 44 Fehlermuster.
 
 ### Phase 5 - Lernfortschritt
 

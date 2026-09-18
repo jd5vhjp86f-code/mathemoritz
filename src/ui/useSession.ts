@@ -15,7 +15,11 @@ import { createRandom } from '../learning/random.ts';
 export interface SessionSteuerung {
   readonly state: SessionState;
   readonly eingeben: (value: string) => void;
-  readonly pruefenJetzt: () => void;
+  /**
+   * Prüft die Antwort. `direkt` übergibt die Eingabe mit - nötig bei einer
+   * Auswahl, wo Klicken zugleich Eingabe und Abgabe ist.
+   */
+  readonly pruefenJetzt: (direkt?: string) => void;
   readonly tipp: () => void;
   readonly loesung: () => void;
   readonly weiter: () => void;
@@ -28,9 +32,20 @@ export interface SessionSteuerung {
  * Hier liegt der einzige Zufallsgenerator der Übungsrunde. Alles andere ist
  * bereits ohne React getestet.
  */
+/**
+ * Zähler für den Startwert.
+ *
+ * Nur `Date.now()` zu nehmen reicht nicht: zwei Runden, die in derselben
+ * Millisekunde beginnen, bekämen sonst dieselbe Aufgabenfolge.
+ */
+let laufendeNummer = 0;
+
 export function useSession(topic: TopicModule, startLevel: Level): SessionSteuerung {
   const random = useRef<(() => number) | null>(null);
-  random.current ??= createRandom(Date.now() % 2_147_483_647);
+  if (random.current === null) {
+    laufendeNummer += 1;
+    random.current = createRandom((Date.now() + laufendeNummer * 7919) % 2_147_483_647);
+  }
   const wuerfeln = random.current;
 
   const [state, setState] = useState<SessionState>(() =>
@@ -41,9 +56,12 @@ export function useSession(topic: TopicModule, startLevel: Level): SessionSteuer
     setState((s) => setInput(s, value));
   }, []);
 
-  const pruefenJetzt = useCallback(() => {
-    setState((s) => pruefen(s, topic));
-  }, [topic]);
+  const pruefenJetzt = useCallback(
+    (direkt?: string) => {
+      setState((s) => pruefen(direkt === undefined ? s : setInput(s, direkt), topic));
+    },
+    [topic],
+  );
 
   const tipp = useCallback(() => {
     setState(tippZeigen);

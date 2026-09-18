@@ -8,6 +8,11 @@ import { AnswerInput } from './AnswerInput.tsx';
 interface Props {
   readonly topic: TopicModule;
   readonly onBack: () => void;
+  /**
+   * Stufe, mit der die Runde beginnt. Standard ist die leichteste.
+   * Ab Phase 5 kann hier stehen, wo der Schüler zuletzt war.
+   */
+  readonly startLevel?: Level | undefined;
 }
 
 const STUFEN_NAMEN: Readonly<Record<Level, string>> = {
@@ -17,8 +22,8 @@ const STUFEN_NAMEN: Readonly<Record<Level, string>> = {
 };
 
 /** Die Übungsschleife: Aufgabe, Eingabe, Rückmeldung, nächste Aufgabe. */
-export function PracticeSession({ topic, onBack }: Props) {
-  const { state, eingeben, pruefenJetzt, tipp, loesung, weiter, stufe } = useSession(topic, 1);
+export function PracticeSession({ topic, onBack, startLevel = 1 }: Props) {
+  const { state, eingeben, pruefenJetzt, tipp, loesung, weiter, stufe } = useSession(topic, startLevel);
   const { task, result, phase } = state;
   const fertig = phase !== 'eingabe';
 
@@ -62,6 +67,7 @@ export function PracticeSession({ topic, onBack }: Props) {
         <AnswerInput
           key={task.id}
           answerKind={task.answerKind}
+          choices={task.choices}
           disabled={fertig}
           onChange={eingeben}
           onSubmit={pruefenJetzt}
@@ -99,14 +105,20 @@ export function PracticeSession({ topic, onBack }: Props) {
             </button>
           ) : (
             <>
-              <button
-                type="button"
-                className="knopf knopf--haupt"
-                disabled={state.input === ''}
-                onClick={pruefenJetzt}
-              >
-                Prüfen
-              </button>
+              {/* Bei einer Auswahl ist das Antippen schon die Abgabe - ein
+                  zusätzlicher „Prüfen"-Knopf wäre nur im Weg. */}
+              {task.answerKind === 'choice' ? null : (
+                <button
+                  type="button"
+                  className="knopf knopf--haupt"
+                  disabled={state.input === ''}
+                  onClick={() => {
+                    pruefenJetzt();
+                  }}
+                >
+                  Prüfen
+                </button>
+              )}
               <button type="button" className="knopf" disabled={tippsUebrig(state) === 0} onClick={tipp}>
                 Tipp
               </button>

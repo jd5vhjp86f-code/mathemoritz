@@ -12,7 +12,7 @@ import type { Level, Task, TopicModule } from './types.ts';
 import { LEVELS } from './types.ts';
 import { topics } from './index.ts';
 import { absBigInt, isFullyReduced } from '../core/fraction.ts';
-import { formatFractionText } from '../core/format.ts';
+import { formatDecimalText, formatFractionText } from '../core/format.ts';
 import { createRandom } from '../learning/random.ts';
 
 const arbSeed = fc.integer({ min: 0, max: 2 ** 31 - 1 });
@@ -21,8 +21,18 @@ const arbLevel = fc.constantFrom<Level>(1, 2, 3);
 /** Notbremse gegen davonlaufende Generatoren, unabhängig vom Thema. */
 const OBERGRENZE = 5000n;
 
+/** Schreibt die Lösung so auf, wie ein Schüler sie eingeben würde. */
 function loesungAls(task: Task): string {
-  return task.answerKind === 'integer' ? task.solution.n.toString() : formatFractionText(task.solution);
+  switch (task.answerKind) {
+    case 'integer':
+      return task.solution.n.toString();
+    case 'decimal':
+      return formatDecimalText(task.solution);
+    case 'choice':
+      return task.choices?.[Number(task.solution.n)] ?? '';
+    case 'fraction':
+      return formatFractionText(task.solution);
+  }
 }
 
 function jedesThema(name: string, pruefung: (topic: TopicModule) => void): void {
@@ -123,6 +133,15 @@ jedesThema('passt Lösung, Anforderung und Antwortart zusammen (Property)', (top
       if (task.requirement.kind === 'reduced') expect(isFullyReduced(task.solution)).toBe(true);
       if (task.requirement.kind === 'denominator') expect(task.solution.d).toBe(task.requirement.denominator);
       if (task.answerKind === 'integer') expect(task.solution.d).toBe(1n);
+      if (task.answerKind === 'choice') {
+        const choices = task.choices ?? [];
+        expect(choices.length).toBeGreaterThanOrEqual(2);
+        expect(task.solution.d).toBe(1n);
+        expect(Number(task.solution.n)).toBeLessThan(choices.length);
+        expect(Number(task.solution.n)).toBeGreaterThanOrEqual(0);
+      } else {
+        expect(task.choices).toBeUndefined();
+      }
     }),
   );
 });

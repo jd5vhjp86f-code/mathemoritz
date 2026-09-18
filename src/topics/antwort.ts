@@ -6,10 +6,10 @@
  * dieselbe Rückmeldung geben. Deshalb liegen sie hier.
  */
 
-import type { AnswerKind, CheckResult } from './types.ts';
+import type { AnswerKind, CheckResult, Task } from './types.ts';
 import type { Fehlermuster } from './fehlermuster.ts';
 import type { Fraction } from '../core/fraction.ts';
-import { isInteger, parseFraction } from '../core/fraction.ts';
+import { ZERO, isInteger, parseFraction } from '../core/fraction.ts';
 
 /** Ergebnis des Einlesens: entweder ein Wert oder ein fertiger Fehlerfall. */
 export type Antwort =
@@ -24,7 +24,18 @@ export function leseAntwort(input: string, answerKind: AnswerKind): Antwort {
   const text = input.trim();
 
   if (text === '') {
-    return abbruch('Da steht noch nichts. Schreib deine Antwort in das Feld.', 'eingabe-leer');
+    return abbruch(
+      answerKind === 'choice'
+        ? 'Wähl eine der Möglichkeiten aus.'
+        : 'Da steht noch nichts. Schreib deine Antwort in das Feld.',
+      'eingabe-leer',
+    );
+  }
+
+  // Bei einer Auswahl steckt keine Zahl in der Eingabe, sondern eine der
+  // vorgegebenen Beschriftungen. Die wertet das Thema selbst aus.
+  if (answerKind === 'choice') {
+    return { ok: true, wert: ZERO };
   }
 
   const wert = parseFraction(text);
@@ -44,11 +55,33 @@ export function leseAntwort(input: string, answerKind: AnswerKind): Antwort {
     return { ok: true, wert };
   }
 
+  if (answerKind === 'decimal') {
+    if (!istKommazahl(text) && !istGanzeZahl(text)) {
+      return abbruch(
+        'Hier ist eine Kommazahl gefragt, kein Bruch. Schreib sie mit Komma, zum Beispiel 0,75.',
+        'bruch-statt-dezimal',
+      );
+    }
+    return { ok: true, wert };
+  }
+
   if (istKommazahl(text)) {
     return abbruch('Hier ist ein Bruch gefragt, keine Kommazahl. Schreib ihn so: 3/4.', 'dezimal-statt-bruch');
   }
 
   return { ok: true, wert };
+}
+
+/**
+ * Prüft, ob die gewählte Möglichkeit die richtige ist.
+ *
+ * Bei `answerKind: 'choice'` steht in `solution` der Index der richtigen
+ * Möglichkeit.
+ */
+export function gewaehlt(task: Task, input: string): { readonly index: number; readonly richtig: boolean } {
+  const choices = task.choices ?? [];
+  const index = choices.indexOf(input.trim());
+  return { index, richtig: index >= 0 && BigInt(index) === task.solution.n };
 }
 
 /** Kurze Bestätigung, abgeleitet aus der Antwort - bleibt damit reproduzierbar. */
@@ -80,4 +113,8 @@ function abbruch(feedback: string, errorPattern: Fehlermuster): Antwort {
 
 function istKommazahl(text: string): boolean {
   return /^[+-]?\d*[,.]\d+$/.test(text.replace(/\s/g, ''));
+}
+
+function istGanzeZahl(text: string): boolean {
+  return /^[+-]?\d+$/.test(text.replace(/\s/g, ''));
 }

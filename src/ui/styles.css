@@ -428,3 +428,52 @@ body {
   background: transparent;
   border-color: transparent;
 }
+
+/* --- Dezimalzahlen mit Periode ----------------------------------- */
+
+.dezimal {
+  font-variant-numeric: tabular-nums;
+}
+
+.dezimal__komma {
+  /* Etwas Luft um das Komma, sonst klebt es an der Ziffer. */
+  padding-right: 0.05em;
+}
+
+.dezimal__periode {
+  text-decoration: overline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.1em;
+}
+
+/* --- Auswahl ----------------------------------------------------- */
+
+.auswahl {
+  display: flex;
+  gap: 10px;
+}
+
+.auswahl__knopf {
+  min-width: var(--touch-ziel);
+  min-height: calc(var(--touch-ziel) + 8px);
+  padding: 0 20px;
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--farbe-text);
+  background: var(--farbe-hintergrund);
+  border: 2px solid var(--farbe-rand);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color var(--dauer-kurz) ease, background-color var(--dauer-kurz) ease;
+}
+
+.auswahl__knopf:hover:not(:disabled),
+.auswahl__knopf:focus-visible {
+  border-color: var(--farbe-akzent);
+}
+
+.auswahl__knopf:disabled {
+  opacity: 0.45;
+  cursor: default;
+}

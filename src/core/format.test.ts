@@ -4,6 +4,7 @@ import { fraction, parseDecimal, equals } from './fraction.ts';
 import {
   formatDecimalLatex,
   formatDecimalRounded,
+  formatDecimalSpoken,
   formatDecimalText,
   formatFractionLatex,
   formatFractionText,
@@ -72,6 +73,28 @@ describe('Dezimal-Darstellung', () => {
         const parsed = parseDecimal(formatDecimalText(value));
         expect(parsed).not.toBeNull();
         if (parsed !== null) expect(equals(parsed, value)).toBe(true);
+      }),
+    );
+  });
+});
+
+describe('Dezimalzahl zum Vorlesen', () => {
+  it('schreibt die Periode aus', () => {
+    expect(formatDecimalSpoken(fraction(5n, 6n))).toBe('0,8 Periode 3');
+    expect(formatDecimalSpoken(fraction(1n, 3n))).toBe('0, Periode 3');
+    expect(formatDecimalSpoken(fraction(1n, 7n))).toBe('0, Periode 142857');
+  });
+
+  it('lässt abbrechende Zahlen unverändert', () => {
+    expect(formatDecimalSpoken(fraction(9n, 4n))).toBe('2,25');
+    expect(formatDecimalSpoken(fraction(8n, 4n))).toBe('2');
+    expect(formatDecimalSpoken(fraction(-9n, 4n))).toBe('-2,25');
+  });
+
+  it('enthält nie ein Overline-Zeichen (Property)', () => {
+    fc.assert(
+      fc.property(fc.bigInt({ min: 1n, max: 500n }), fc.bigInt({ min: 1n, max: 500n }), (n, d) => {
+        expect(formatDecimalSpoken(fraction(n, d))).not.toContain(String.fromCodePoint(0x0305));
       }),
     );
   });
