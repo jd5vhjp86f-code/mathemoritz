@@ -4,9 +4,15 @@ import { topics } from '../topics/index.ts';
 import { TopicList } from './TopicList.tsx';
 import { PracticeSession } from './PracticeSession.tsx';
 import { FortschrittAnsicht } from './Fortschritt.tsx';
+import { EinstellungenAnsicht } from './Einstellungen.tsx';
 import { useFortschritt } from './useFortschritt.ts';
+import { useEinstellungen } from './useEinstellungen.ts';
 
-type Ansicht = { readonly art: 'themen' } | { readonly art: 'uebung'; readonly topic: TopicModule } | { readonly art: 'fortschritt' };
+type Ansicht =
+  | { readonly art: 'themen' }
+  | { readonly art: 'uebung'; readonly topic: TopicModule }
+  | { readonly art: 'fortschritt' }
+  | { readonly art: 'einstellungen' };
 
 /**
  * App-Hülle: Themenauswahl, laufende Übungsrunde oder Fortschritt.
@@ -15,6 +21,7 @@ type Ansicht = { readonly art: 'themen' } | { readonly art: 'uebung'; readonly t
 export function App() {
   const [ansicht, setAnsicht] = useState<Ansicht>({ art: 'themen' });
   const fortschritt = useFortschritt();
+  const { einstellungen, setze } = useEinstellungen();
 
   return (
     <main className="app">
@@ -32,15 +39,26 @@ export function App() {
               setAnsicht({ art: 'uebung', topic });
             }}
           />
-          <button
-            type="button"
-            className="knopf"
-            onClick={() => {
-              setAnsicht({ art: 'fortschritt' });
-            }}
-          >
-            Dein Fortschritt
-          </button>
+          <div className="knoepfe">
+            <button
+              type="button"
+              className="knopf"
+              onClick={() => {
+                setAnsicht({ art: 'fortschritt' });
+              }}
+            >
+              Dein Fortschritt
+            </button>
+            <button
+              type="button"
+              className="knopf knopf--leise"
+              onClick={() => {
+                setAnsicht({ art: 'einstellungen' });
+              }}
+            >
+              Einstellungen
+            </button>
+          </div>
         </>
       ) : null}
 
@@ -48,6 +66,17 @@ export function App() {
         <PracticeSession
           topic={ansicht.topic}
           fortschritt={fortschritt}
+          einstellungen={einstellungen}
+          onBack={() => {
+            setAnsicht({ art: 'themen' });
+          }}
+        />
+      ) : null}
+
+      {ansicht.art === 'einstellungen' ? (
+        <EinstellungenAnsicht
+          einstellungen={einstellungen}
+          setze={setze}
           onBack={() => {
             setAnsicht({ art: 'themen' });
           }}

@@ -27,8 +27,8 @@ jobs:
       - run: npm run lint
       - run: npm test
       - run: npm run build
-      - name: CNAME muss im Build liegen
-        run: test -f dist/CNAME
+      - name: CNAME und Service Worker müssen im Build liegen
+        run: test -f dist/CNAME && test -f dist/sw.js
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:

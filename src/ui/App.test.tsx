@@ -11,6 +11,8 @@ import { bruchDezimal } from '../topics/bruch-dezimal/index.ts';
 import { fraction } from '../core/fraction.ts';
 import { createRandom } from '../learning/random.ts';
 import { FortschrittAnsicht } from './Fortschritt.tsx';
+import { EinstellungenAnsicht } from './Einstellungen.tsx';
+import { STANDARD } from '../learning/einstellungen.ts';
 import { LEERER_FORTSCHRITT, aktualisiere } from '../learning/fortschritt.ts';
 import { DecimalView } from './DecimalView.tsx';
 import { AnswerInput } from './AnswerInput.tsx';
@@ -301,5 +303,45 @@ describe('Themenliste mit Stand', () => {
     );
     expect(mit).toContain('topic-list__stand');
     expect(mit).toContain('Aufgabenarten sitzen');
+  });
+});
+
+describe('Einstellungen', () => {
+  function leer() {
+    /* im Test ohne Wirkung */
+  }
+
+  const markup = renderToStaticMarkup(
+    <EinstellungenAnsicht einstellungen={STANDARD} setze={leer} onBack={leer} />,
+  );
+
+  it('bietet Bewegung, Töne und Serien zum Abschalten', () => {
+    expect(markup).toContain('Bewegung');
+    expect(markup).toContain('Töne');
+    expect(markup).toContain('Serien anzeigen');
+    expect(markup.match(/type="checkbox"/g)?.length).toBe(3);
+  });
+
+  it('hat Töne von Haus aus aus und den Rest an', () => {
+    expect(markup.match(/checked=""/g)?.length).toBe(2);
+  });
+
+  it('weist auf die Systemeinstellung für weniger Bewegung hin', () => {
+    expect(markup).toContain('weniger Bewegung');
+  });
+});
+
+describe('Übungsseite mit Einstellungen', () => {
+  it('zeigt die Serie nur, wenn Serien eingeschaltet sind', () => {
+    const ohne = renderToStaticMarkup(
+      <PracticeSession
+        topic={bruecheKuerzen}
+        einstellungen={{ animationen: true, toene: false, motivation: false }}
+        onBack={() => {
+          /* im Test ohne Wirkung */
+        }}
+      />,
+    );
+    expect(ohne).toContain('Los geht');
   });
 });

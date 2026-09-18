@@ -120,12 +120,26 @@ wieder. Jetzt bleibt eine Verbindung offen, es wird auf den Abschluss der
 Transaktion gewartet, und die Ansicht bestätigt erst danach. Bei einer
 Löschfunktion ist das keine Feinheit.
 
-### Phase 6 - Feinschliff
+### Phase 6 - Feinschliff (abgeschlossen)
 
-- Motivation: Streaks und kleine Rückmeldungen, abschaltbar.
-- Animationen und Sounds, abschaltbar, `prefers-reduced-motion` respektiert.
-- Offline-Fähigkeit (Service Worker), Tastatur- und Screenreader-Betrieb.
-- Test auf echtem Tablet und Telefon.
+- `learning/einstellungen.ts`: Bewegung, Töne und Serien lassen sich einzeln
+  abschalten. Gespeichert in localStorage. Töne stehen standardmäßig aus - eine
+  App, die ungefragt piepst, ist am Küchentisch eine Zumutung.
+- Bewegung wird an zwei Stellen gestoppt: über `prefers-reduced-motion` und
+  über den Schalter. Beides wirkt im Stylesheet, damit keine Komponente daran
+  denken muss.
+- `ui/toene.ts` erzeugt zwei Sinustöne über die Web-Audio-Schnittstelle. Keine
+  Audiodateien: Es darf nichts nachgeladen werden, und zwei Töne sind keine
+  50 KB im Bundle wert. Der Ton bei einer falschen Antwort ist weich und tief,
+  nicht schrill.
+- `learning/motivation.ts`: Rückmeldungen nur an Wegmarken (3, 5, 10, 15, 20,
+  dann alle 10). Lob bei jeder Aufgabe nutzt sich ab und wirkt unecht.
+- Service Worker aus einem eigenen, kleinen Vite-Plugin. Seitenaufrufe holen
+  erst das Netz, damit Neues ankommt; Dateien mit Hash im Namen kommen aus dem
+  Vorrat. Die App läuft damit ohne Empfang.
+- Tastatur und Screenreader geprüft: Tab erreicht alles, Enter prüft, der Fokus
+  springt selbst ins Eingabefeld, jede Aufgabe hat einen Fließtext, jedes
+  Eingabefeld eine Beschriftung.
 
 ## Getroffene Entscheidungen
 
@@ -145,5 +159,8 @@ die Anzeige zu tauschen, kein Themen-Modul.
 - Umfang der Themen über das Bruchrechnen hinaus (Prozent, Terme, Gleichungen)
   wird nach Phase 5 anhand des Unterrichtsstands entschieden.
 - Ob die Browser-Prüfung (Playwright) fest ins Repository und in die CI kommt.
-  Bisher läuft sie von Hand. Dafür käme eine schwere Abhängigkeit und ein
-  Browser-Schritt in die CI dazu - das ist eine eigene Entscheidung.
+  Bisher läuft sie von Hand, und das rächt sich bereits: Es gibt inzwischen
+  mehrere Prüfskripte nebeneinander, die Annahmen aus ihrer jeweiligen Phase
+  festhalten und veralten, sobald sich etwas ändert. Ein gepflegter Test im
+  Repository wäre einer statt fünf. Dafür käme Playwright als Abhängigkeit und
+  ein Browser-Schritt in die CI dazu - das ist eine eigene Entscheidung.

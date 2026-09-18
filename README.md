@@ -2,8 +2,11 @@
 
 Übungs-App für Mathematik, Gymnasium Klasse 7. Schwerpunkt Bruchrechnen.
 
-Läuft im Browser, funktioniert offline, speichert ausschließlich lokal und
-schickt keine Daten nach außen.
+Läuft im Browser, funktioniert dank Service Worker auch ohne Empfang,
+speichert ausschließlich lokal und schickt keine Daten nach außen.
+
+Bewegung, Töne und Serien lassen sich in der App einzeln abschalten;
+`prefers-reduced-motion` wird ohnehin respektiert.
 
 ## Entwicklung
 
@@ -28,6 +31,8 @@ Vor jedem Commit laufen `npm run lint`, `npm test` und `npm run build`.
   Daneben die gemeinsamen Bausteine: `antwort.ts` (Eingaben lesen),
   `aufgabe.ts` (Aufgaben bauen), `fehlermuster.ts` (Katalog).
 - `src/ui/` - React-Komponenten ohne eigene Rechen-Logik.
+- `vite.config.ts` - enthält das kleine Plugin, das den Service Worker mit der
+  Liste der gebauten Dateien erzeugt.
 - `docs/FEHLERMUSTER.md` - erkannte Fehlermuster und die passenden
   Rückmeldungen. Ein Test hält Code und Doku zusammen.
 
