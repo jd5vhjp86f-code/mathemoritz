@@ -48,5 +48,5 @@ In der App lässt er sich als Datei sichern und vollständig löschen.
 ## Deployment
 
 Push auf `main` startet GitHub Actions: Lint, Tests, Build und Deploy nach
-GitHub Pages unter `mathe.rosenbaum.hamburg`. Die Datei `public/CNAME` hält
+GitHub Pages unter `mathemoritz.rosenbaum.hamburg`. Die Datei `public/CNAME` hält
 die Domain und darf nicht gelöscht werden.

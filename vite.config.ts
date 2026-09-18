@@ -84,7 +84,7 @@ self.addEventListener('fetch', (ereignis) => {
   };
 }
 
-// Deployment: GitHub Pages auf eigener Domain (mathe.rosenbaum.hamburg) -> base '/'.
+// Deployment: GitHub Pages auf eigener Domain (mathemoritz.rosenbaum.hamburg) -> base '/'.
 export default defineConfig({
   base: '/',
   plugins: [react(), serviceWorkerPlugin()],
