@@ -10,12 +10,14 @@ import { bruecheKuerzen } from './brueche-kuerzen/index.ts';
 import { bruecheAddieren } from './brueche-addieren/index.ts';
 import { bruecheMultiplizieren } from './brueche-multiplizieren/index.ts';
 import { bruecheDividieren } from './brueche-dividieren/index.ts';
+import { bruchDezimal } from './bruch-dezimal/index.ts';
 
 export const topics: readonly TopicModule[] = [
   bruecheKuerzen,
   bruecheAddieren,
   bruecheMultiplizieren,
   bruecheDividieren,
+  bruchDezimal,
 ];
 
 /** Liefert ein Thema oder `undefined`, wenn die ID unbekannt ist. */

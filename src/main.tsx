@@ -13,3 +13,18 @@ createRoot(container).render(
     <App />
   </StrictMode>,
 );
+
+/*
+ * Service Worker anmelden, damit die App ohne Netz läuft.
+ *
+ * Nur im fertigen Build: Während der Entwicklung würde ein Worker den
+ * Neuladen-Kreislauf stören. Schlägt die Anmeldung fehl, ist das kein Grund
+ * zur Aufregung - dann läuft die App eben nur online.
+ */
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {
+      // Ohne Service Worker geht es auch.
+    });
+  });
+}

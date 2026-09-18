@@ -11,8 +11,8 @@ import type { Level, Task } from '../types.ts';
 import type { Fraction } from '../../core/fraction.ts';
 import { fraction, mul } from '../../core/fraction.ts';
 import { formatFractionText } from '../../core/format.ts';
-import { baueRechenaufgabe } from '../aufgabe.ts';
-import { pick, randomInt } from '../../learning/random.ts';
+import { baueRechenaufgabe, waehleVariante } from '../aufgabe.ts';
+import { randomInt } from '../../learning/random.ts';
 
 export const TOPIC_ID = 'brueche-multiplizieren';
 
@@ -45,9 +45,9 @@ export function levelBounds(level: Level): LevelBounds {
   };
 }
 
-export function generate(level: Level, random: () => number): Task {
+export function generate(level: Level, random: () => number, gewuenscht?: string): Task {
   const config = CONFIG[level];
-  const variant = pick(random, config.variants);
+  const variant = waehleVariante(config.variants, gewuenscht, random);
   const a = zufallsbruch(config, random);
 
   if (variant === 'bruch-mal-zahl') {
@@ -103,4 +103,9 @@ function baueAufgabe(level: Level, variant: Variant, a: Fraction, b: Fraction, r
     solutionSteps: schritte,
     random,
   });
+}
+
+/** Die Varianten dieser Stufe. */
+export function variants(level: Level): readonly string[] {
+  return CONFIG[level].variants;
 }

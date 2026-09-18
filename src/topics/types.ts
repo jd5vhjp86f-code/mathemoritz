@@ -41,10 +41,14 @@ export type ExpressionPart =
 
 /** Was der Schüler eingeben soll. */
 export type AnswerKind =
-  /** Ein Bruch, eine gemischte Zahl oder eine Dezimalzahl. */
+  /** Ein Bruch oder eine gemischte Zahl. */
   | 'fraction'
   /** Eine ganze Zahl, z. B. ein Hauptnenner oder ein Erweiterungsfaktor. */
-  | 'integer';
+  | 'integer'
+  /** Eine Dezimalzahl in deutscher Schreibweise. */
+  | 'decimal'
+  /** Eine von mehreren vorgegebenen Möglichkeiten, siehe `choices`. */
+  | 'choice';
 
 /** Wann eine Antwort als richtig gilt. */
 export type AnswerRequirement =
@@ -71,6 +75,11 @@ export interface Task {
   /** Dieselbe Aufgabe als Fließtext, für Screenreader und einfache Ansicht. */
   readonly promptText: string;
   readonly answerKind: AnswerKind;
+  /**
+   * Die Möglichkeiten bei `answerKind: 'choice'`. Die Lösung ist dann der
+   * Index der richtigen Möglichkeit, abgelegt als ganze Zahl in `solution`.
+   */
+  readonly choices?: readonly string[];
   readonly requirement: AnswerRequirement;
   /** Die exakte Lösung. Bei `answerKind: 'integer'` ist der Nenner 1. */
   readonly solution: Fraction;
@@ -107,8 +116,16 @@ export interface TopicModule {
   readonly title: string;
   /** Ein Satz, was hier geübt wird. */
   readonly description: string;
-  /** Erzeugt eine Aufgabe. `random` liefert Werte in [0, 1). */
-  generate(level: Level, random: () => number): Task;
+  /** Die Varianten, die auf dieser Stufe vorkommen können. */
+  variants(level: Level): readonly string[];
+  /**
+   * Erzeugt eine Aufgabe. `random` liefert Werte in [0, 1).
+   *
+   * Mit `variant` lässt sich gezielt eine Variante anfordern - so kann die
+   * Lernsteuerung genau das üben lassen, was noch wackelt. Ist die Variante auf
+   * dieser Stufe unbekannt, wird wie sonst gewürfelt.
+   */
+  generate(level: Level, random: () => number, variant?: string): Task;
   /** Prüft eine Eingabe gegen die Aufgabe. */
   check(task: Task, input: string): CheckResult;
 }

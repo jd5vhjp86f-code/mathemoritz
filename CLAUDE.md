@@ -49,5 +49,5 @@ fasse zusammen.
 ## Deployment
 
 - Push auf `main` → GitHub Actions → GitHub Pages unter
-  `mathe.rosenbaum.hamburg`.
+  `mathemoritz.rosenbaum.hamburg`.
 - `public/CNAME` nie löschen.

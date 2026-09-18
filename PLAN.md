@@ -76,29 +76,70 @@ Nach jeder Phase wird gestoppt und zusammengefasst.
 - `topics/generatoren.test.ts` prüft Eigenschaften für jedes registrierte
   Thema. Neue Themen erben diese Prüfungen automatisch.
 
-### Phase 4 - Dezimalzahlen und Umwandlungen
+### Phase 4 - Dezimalzahlen und Umwandlungen (abgeschlossen)
 
-Die Rechenkerne dafür stehen schon: `decimalExpansion`, `hasTerminatingDecimal`
-und `roundToDigits` in `core/fraction.ts`, die Periodenschreibweise in
-`core/format.ts`.
+Die Rechenkerne dafür standen schon seit Phase 1: `decimalExpansion`,
+`hasTerminatingDecimal` und `roundToDigits` in `core/fraction.ts`.
 
-- `topics/bruch-dezimal/`: Bruch zu Dezimalzahl und zurück, inklusive Periode.
-- Darstellung mit Periodenstrich in der Formelansicht.
-- Runden und Größenvergleich.
+- `topics/bruch-dezimal/` mit fünf Varianten: Bruch zu Dezimalzahl,
+  Dezimalzahl zu Bruch, Runden, Periode ablesen, Größenvergleich.
+- Zwei neue Antwortarten im Themen-Vertrag: `decimal` (Zahlentastatur mit
+  Komma) und `choice` (große Knöpfe, hier für `<`, `=`, `>`). Bei einer Auswahl
+  ist das Antippen zugleich die Abgabe; der Prüfen-Knopf entfällt.
+- Periodenstrich in der Formelansicht über CSS statt über das kombinierende
+  Unicode-Zeichen, das je nach Schrift verschluckt wird oder schief sitzt.
+  Für Screenreader steht daneben `formatDecimalSpoken`: „0,8 Periode 3".
+- Aufgaben mit Periode werden beim Laden gefiltert: keine Periode, die mit 0
+  beginnt, und höchstens drei Ziffern. 1/7 = 0,142857… wäre ein schöner
+  Klassiker, aber sechs Ziffern abzutippen ist keine Übung im Bruchrechnen.
+- 44 Fehlermuster.
 
-### Phase 5 - Lernfortschritt
+### Phase 5 - Lernfortschritt (abgeschlossen)
 
-- `learning/`: Auswahl der nächsten Aufgabe nach Fehlerquote, Wiederholung
-  nach Abstand (spaced repetition), Stufenaufstieg.
-- Speicherung in IndexedDB, rein lokal, mit Export und Löschfunktion.
-- Uebersicht: was sitzt, was wackelt.
+- `learning/fortschritt.ts`: Leitner-Boxen je Baustein (eine Variante eines
+  Themas auf einer Stufe). Auf Anhieb richtig heißt eine Box weiter, mit Tipp
+  bleibt sie stehen, aufgelöst geht eine zurück. Ruhezeiten: 0, 1, 3, 7 und
+  14 Tage.
+- `learning/auswahl.ts`: erst Ungeübtes, dann Fälliges (das Wackeligste
+  zuerst), sonst das, was am längsten her ist. Derselbe Baustein kommt nie
+  zweimal hintereinander.
+- Der Themen-Vertrag kennt jetzt `variants(level)`, und `generate` nimmt
+  optional eine Variante entgegen. Erst dadurch kann die Lernsteuerung gezielt
+  das üben lassen, was noch wackelt.
+- Stufenaufstieg wird geraten, nicht verordnet: Aufstieg erst, wenn jeder
+  Baustein der Stufe mindestens Box 3 erreicht hat; Abstieg wird nach drei
+  Fehlschlägen in Folge nur vorgeschlagen. Die Stufenknöpfe bleiben.
+- `learning/speicher.ts`: IndexedDB, rein lokal, mit strenger Prüfung beim
+  Laden. Einzelne kaputte Einträge werden übersprungen, nicht der ganze
+  Fortschritt verworfen. Ohne IndexedDB wird im Arbeitsspeicher gehalten.
+- Übersicht mit Export als Datei und zweistufigem Löschen.
 
-### Phase 6 - Feinschliff
+Beim Löschen kam ein echter Fehler ans Licht: Die App meldete „gelöscht",
+bevor die lokale Datenbank es war. Wer sofort neu lud, hatte seine Daten
+wieder. Jetzt bleibt eine Verbindung offen, es wird auf den Abschluss der
+Transaktion gewartet, und die Ansicht bestätigt erst danach. Bei einer
+Löschfunktion ist das keine Feinheit.
 
-- Motivation: Streaks und kleine Rückmeldungen, abschaltbar.
-- Animationen und Sounds, abschaltbar, `prefers-reduced-motion` respektiert.
-- Offline-Fähigkeit (Service Worker), Tastatur- und Screenreader-Betrieb.
-- Test auf echtem Tablet und Telefon.
+### Phase 6 - Feinschliff (abgeschlossen)
+
+- `learning/einstellungen.ts`: Bewegung, Töne und Serien lassen sich einzeln
+  abschalten. Gespeichert in localStorage. Töne stehen standardmäßig aus - eine
+  App, die ungefragt piepst, ist am Küchentisch eine Zumutung.
+- Bewegung wird an zwei Stellen gestoppt: über `prefers-reduced-motion` und
+  über den Schalter. Beides wirkt im Stylesheet, damit keine Komponente daran
+  denken muss.
+- `ui/toene.ts` erzeugt zwei Sinustöne über die Web-Audio-Schnittstelle. Keine
+  Audiodateien: Es darf nichts nachgeladen werden, und zwei Töne sind keine
+  50 KB im Bundle wert. Der Ton bei einer falschen Antwort ist weich und tief,
+  nicht schrill.
+- `learning/motivation.ts`: Rückmeldungen nur an Wegmarken (3, 5, 10, 15, 20,
+  dann alle 10). Lob bei jeder Aufgabe nutzt sich ab und wirkt unecht.
+- Service Worker aus einem eigenen, kleinen Vite-Plugin. Seitenaufrufe holen
+  erst das Netz, damit Neues ankommt; Dateien mit Hash im Namen kommen aus dem
+  Vorrat. Die App läuft damit ohne Empfang.
+- Tastatur und Screenreader geprüft: Tab erreicht alles, Enter prüft, der Fokus
+  springt selbst ins Eingabefeld, jede Aufgabe hat einen Fließtext, jedes
+  Eingabefeld eine Beschriftung.
 
 ## Getroffene Entscheidungen
 
@@ -117,8 +158,9 @@ die Anzeige zu tauschen, kein Themen-Modul.
 
 - Umfang der Themen über das Bruchrechnen hinaus (Prozent, Terme, Gleichungen)
   wird nach Phase 5 anhand des Unterrichtsstands entschieden.
-- Ob die Stufe automatisch mitwächst oder von Hand gewählt bleibt, entscheidet
-  Phase 5. Bis dahin wählt der Schüler selbst.
 - Ob die Browser-Prüfung (Playwright) fest ins Repository und in die CI kommt.
-  Bisher läuft sie von Hand. Dafür käme eine schwere Abhängigkeit und ein
-  Browser-Schritt in die CI dazu - das ist eine eigene Entscheidung.
+  Bisher läuft sie von Hand, und das rächt sich bereits: Es gibt inzwischen
+  mehrere Prüfskripte nebeneinander, die Annahmen aus ihrer jeweiligen Phase
+  festhalten und veralten, sobald sich etwas ändert. Ein gepflegter Test im
+  Repository wäre einer statt fünf. Dafür käme Playwright als Abhängigkeit und
+  ein Browser-Schritt in die CI dazu - das ist eine eigene Entscheidung.

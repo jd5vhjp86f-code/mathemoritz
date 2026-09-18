@@ -12,6 +12,7 @@ export const FEHLERMUSTER = [
   'eingabe-leer',
   'eingabe-unlesbar',
   'dezimal-statt-bruch',
+  'bruch-statt-dezimal',
   'ganze-zahl-erwartet',
 
   // Überall gültig
@@ -57,6 +58,17 @@ export const FEHLERMUSTER = [
   'kehrwert-vergessen',
   'ersten-bruch-gestuerzt',
   'beide-brueche-gestuerzt',
+
+  // Brüche und Dezimalzahlen
+  'komma-verrutscht',
+  'nenner-durch-zaehler-geteilt',
+  'zaehler-als-nachkommastelle',
+  'nicht-gerundet',
+  'abgeschnitten-statt-gerundet',
+  'vorperiode-als-periode',
+  'ganze-dezimalzahl-statt-periode',
+  'groesser-kleiner-verwechselt',
+  'nachkommastellen-als-zahl-verglichen',
 ] as const;
 
 export type Fehlermuster = (typeof FEHLERMUSTER)[number];

@@ -1,4 +1,9 @@
 import type { Level, TopicModule } from '../topics/types.ts';
+import type { FortschrittSteuerung } from './useFortschritt.ts';
+import type { Einstellungen } from '../learning/einstellungen.ts';
+import { STANDARD } from '../learning/einstellungen.ts';
+import { serienLob } from '../learning/motivation.ts';
+import { tonFalsch, tonRichtig } from './toene.ts';
 import { LEVELS } from '../topics/types.ts';
 import { tippsUebrig } from '../learning/session.ts';
 import { useSession } from './useSession.ts';
@@ -8,6 +13,14 @@ import { AnswerInput } from './AnswerInput.tsx';
 interface Props {
   readonly topic: TopicModule;
   readonly onBack: () => void;
+  /**
+   * Stufe, mit der die Runde beginnt. Standard ist die leichteste.
+   * Ab Phase 5 kann hier stehen, wo der Schüler zuletzt war.
+   */
+  readonly startLevel?: Level | undefined;
+  /** Ohne Fortschritt wird nur gewürfelt und nichts gespeichert. */
+  readonly fortschritt?: FortschrittSteuerung | undefined;
+  readonly einstellungen?: Einstellungen | undefined;
 }
 
 const STUFEN_NAMEN: Readonly<Record<Level, string>> = {
@@ -17,10 +30,39 @@ const STUFEN_NAMEN: Readonly<Record<Level, string>> = {
 };
 
 /** Die Übungsschleife: Aufgabe, Eingabe, Rückmeldung, nächste Aufgabe. */
-export function PracticeSession({ topic, onBack }: Props) {
-  const { state, eingeben, pruefenJetzt, tipp, loesung, weiter, stufe } = useSession(topic, 1);
+export function PracticeSession({
+  topic,
+  onBack,
+  startLevel = 1,
+  fortschritt,
+  einstellungen = STANDARD,
+}: Props) {
+  const { state, eingeben, pruefenJetzt, tipp, loesung, weiter, stufe, rat } = useSession(
+    topic,
+    startLevel,
+    fortschritt,
+  );
   const { task, result, phase } = state;
   const fertig = phase !== 'eingabe';
+  const lob = einstellungen.motivation ? serienLob(state.stats.streak) : null;
+
+  /**
+   * Prüft und gibt dabei den Ton aus.
+   *
+   * Der Ton hängt am Ergebnis, nicht am Zustand danach: Nach einem Fehlversuch
+   * bleibt die Aufgabe offen, und genau dann soll der weiche Ton kommen.
+   */
+  function pruefenMitTon(direkt?: string) {
+    if (!einstellungen.toene) {
+      pruefenJetzt(direkt);
+      return;
+    }
+    const eingabe = direkt ?? state.input;
+    const ergebnis = topic.check(task, eingabe);
+    if (ergebnis.correct) tonRichtig();
+    else tonFalsch();
+    pruefenJetzt(direkt);
+  }
 
   return (
     <div className="uebung">
@@ -62,9 +104,10 @@ export function PracticeSession({ topic, onBack }: Props) {
         <AnswerInput
           key={task.id}
           answerKind={task.answerKind}
+          choices={task.choices}
           disabled={fertig}
           onChange={eingeben}
-          onSubmit={pruefenJetzt}
+          onSubmit={pruefenMitTon}
         />
 
         <p className="rueckmeldung" aria-live="polite">
@@ -72,6 +115,29 @@ export function PracticeSession({ topic, onBack }: Props) {
             <span className={result.correct ? 'rueckmeldung--gut' : 'rueckmeldung--hinweis'}>{result.feedback}</span>
           ) : null}
         </p>
+
+        {lob === null || phase !== 'geloest' ? null : (
+          <p className="serienlob" aria-live="polite">
+            {lob}
+          </p>
+        )}
+
+        {rat.art === 'bleiben' || !fertig ? null : (
+          <p className="rat">
+            {rat.art === 'aufsteigen'
+              ? `Das sitzt. Willst du ${STUFEN_NAMEN[rat.ziel]} probieren?`
+              : `Gerade ist es knifflig. Magst du es mit ${STUFEN_NAMEN[rat.ziel]} versuchen?`}{' '}
+            <button
+              type="button"
+              className="knopf knopf--klein"
+              onClick={() => {
+                stufe(rat.ziel);
+              }}
+            >
+              Zu {STUFEN_NAMEN[rat.ziel]}
+            </button>
+          </p>
+        )}
 
         {state.hintsShown > 0 ? (
           <ul className="tipps">
@@ -99,14 +165,20 @@ export function PracticeSession({ topic, onBack }: Props) {
             </button>
           ) : (
             <>
-              <button
-                type="button"
-                className="knopf knopf--haupt"
-                disabled={state.input === ''}
-                onClick={pruefenJetzt}
-              >
-                Prüfen
-              </button>
+              {/* Bei einer Auswahl ist das Antippen schon die Abgabe - ein
+                  zusätzlicher „Prüfen"-Knopf wäre nur im Weg. */}
+              {task.answerKind === 'choice' ? null : (
+                <button
+                  type="button"
+                  className="knopf knopf--haupt"
+                  disabled={state.input === ''}
+                  onClick={() => {
+                    pruefenMitTon();
+                  }}
+                >
+                  Prüfen
+                </button>
+              )}
               <button type="button" className="knopf" disabled={tippsUebrig(state) === 0} onClick={tipp}>
                 Tipp
               </button>

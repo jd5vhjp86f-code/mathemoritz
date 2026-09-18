@@ -428,3 +428,264 @@ body {
   background: transparent;
   border-color: transparent;
 }
+
+/* --- Dezimalzahlen mit Periode ----------------------------------- */
+
+.dezimal {
+  font-variant-numeric: tabular-nums;
+}
+
+.dezimal__komma {
+  /* Etwas Luft um das Komma, sonst klebt es an der Ziffer. */
+  padding-right: 0.05em;
+}
+
+.dezimal__periode {
+  text-decoration: overline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.1em;
+}
+
+/* --- Auswahl ----------------------------------------------------- */
+
+.auswahl {
+  display: flex;
+  gap: 10px;
+}
+
+.auswahl__knopf {
+  min-width: var(--touch-ziel);
+  min-height: calc(var(--touch-ziel) + 8px);
+  padding: 0 20px;
+  font: inherit;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--farbe-text);
+  background: var(--farbe-hintergrund);
+  border: 2px solid var(--farbe-rand);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color var(--dauer-kurz) ease, background-color var(--dauer-kurz) ease;
+}
+
+.auswahl__knopf:hover:not(:disabled),
+.auswahl__knopf:focus-visible {
+  border-color: var(--farbe-akzent);
+}
+
+.auswahl__knopf:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* --- Fortschritt ------------------------------------------------- */
+
+.fortschritt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--abstand);
+}
+
+.themenstand {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.themenstand__eintrag {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.themenstand__titel {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.themenstand__zeile {
+  margin: 0;
+  color: var(--farbe-text-leise);
+  font-size: 0.9rem;
+}
+
+.balken {
+  display: flex;
+  gap: 3px;
+  height: 12px;
+}
+
+.balken__teil {
+  border-radius: 6px;
+  min-width: 8px;
+}
+
+.balken__teil--sitzt {
+  background: #15803d;
+}
+
+.balken__teil--kommt {
+  background: var(--farbe-akzent);
+}
+
+.balken__teil--wackelt {
+  background: #d97706;
+}
+
+.balken__teil--neu {
+  background: var(--farbe-rand);
+}
+
+@media (prefers-color-scheme: dark) {
+  .balken__teil--sitzt {
+    background: #4ade80;
+  }
+
+  .balken__teil--wackelt {
+    background: #fbbf24;
+  }
+}
+
+.daten p {
+  margin: 0 0 12px;
+  color: var(--farbe-text-leise);
+  font-size: 0.95rem;
+}
+
+.daten h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+
+.knopf--warnung {
+  color: #fff;
+  background: #b91c1c;
+  border-color: #b91c1c;
+  font-weight: 600;
+}
+
+.topic-list__stand {
+  color: var(--farbe-akzent);
+  font-size: 0.85rem;
+}
+
+/* --- Stufenrat --------------------------------------------------- */
+
+.rat {
+  margin: 0;
+  padding: 12px;
+  background: var(--farbe-hintergrund);
+  border-radius: 10px;
+  color: var(--farbe-text-leise);
+  font-size: 0.95rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.knopf--klein {
+  min-height: var(--touch-ziel);
+  padding: 0 14px;
+  font-size: 0.95rem;
+}
+
+.loeschstand {
+  margin: 0 0 12px;
+  color: var(--farbe-text);
+  font-weight: 600;
+}
+
+/* --- Einstellungen ----------------------------------------------- */
+
+.schalterliste {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schalter {
+  padding: 0;
+}
+
+.schalter__label {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: var(--abstand);
+  min-height: var(--touch-ziel);
+  cursor: pointer;
+}
+
+.schalter__box {
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  flex: 0 0 auto;
+  accent-color: var(--farbe-akzent);
+}
+
+.schalter__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.schalter__titel {
+  font-weight: 600;
+}
+
+.schalter__erklaerung {
+  color: var(--farbe-text-leise);
+  font-size: 0.95rem;
+}
+
+.hinweis {
+  margin: 0;
+  color: var(--farbe-text-leise);
+  font-size: 0.9rem;
+}
+
+/* --- Bewegung ---------------------------------------------------- */
+
+.rueckmeldung--gut {
+  animation: aufblitzen 420ms ease-out;
+}
+
+.serienlob {
+  margin: 0;
+  text-align: center;
+  color: var(--farbe-akzent);
+  font-weight: 600;
+  animation: aufblitzen 420ms ease-out;
+}
+
+@keyframes aufblitzen {
+  from {
+    transform: scale(0.94);
+    opacity: 0.4;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/*
+ * Zwei Wege, Bewegung abzustellen: die Systemeinstellung und der Schalter in
+ * der App. Beide wirken hier, damit keine Komponente daran denken muss.
+ */
+:root[data-animationen='aus'] *,
+:root[data-animationen='aus'] *::before,
+:root[data-animationen='aus'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}

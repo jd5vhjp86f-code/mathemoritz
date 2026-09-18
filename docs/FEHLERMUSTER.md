@@ -43,6 +43,16 @@ ist.
 **Rückmeldung:** „Hier ist ein Bruch gefragt, keine Kommazahl. Schreib ihn so:
 3/4."
 
+### `bruch-statt-dezimal`
+
+**Beschreibung:** Es wurde ein Bruch eingegeben, obwohl eine Kommazahl gefragt
+ist. Die Umkehrung von `dezimal-statt-bruch`.
+
+**Beispiel:** 3/4 statt 0,75.
+
+**Rückmeldung:** „Hier ist eine Kommazahl gefragt, kein Bruch. Schreib sie mit
+Komma, zum Beispiel 0,75."
+
 ### `ganze-zahl-erwartet`
 
 **Beschreibung:** Es wurde ein Bruch eingegeben, obwohl eine ganze Zahl gefragt
@@ -354,6 +364,100 @@ umgedreht, der erste bleibt, wie er ist."
 
 ---
 
+## Brüche und Dezimalzahlen
+
+Fast alle Fehler hier sind Stellenwert-Fehler. Die Rückmeldungen nennen deshalb
+immer die Stelle, um die es geht.
+
+### `komma-verrutscht`
+
+**Beschreibung:** Die Ziffern stimmen, aber das Komma steht eine Zehnerpotenz
+daneben.
+
+**Beispiel:** 3/4 wird zu 7,5 statt 0,75.
+
+**Rückmeldung:** „Die Ziffern stimmen, aber das Komma sitzt falsch. Richtig ist
+0,75."
+
+### `nenner-durch-zaehler-geteilt`
+
+**Beschreibung:** Es wurde andersherum geteilt.
+
+**Beispiel:** 1/4 wird zu 4 statt 0,25.
+
+**Rückmeldung:** „Du hast andersherum geteilt. Es ist 1 durch 4, nicht
+umgekehrt."
+
+### `zaehler-als-nachkommastelle`
+
+**Beschreibung:** Der Zähler wurde einfach hinter das Komma geschrieben, teils
+zusammen mit dem Nenner.
+
+**Beispiel:** 3/4 wird zu 0,3 oder 0,34.
+
+**Rückmeldung:** „Der Zähler wird nicht einfach hinter das Komma geschrieben.
+Erweitere den Bruch auf Zehntel, Hundertstel oder Tausendstel."
+
+### `nicht-gerundet`
+
+**Beschreibung:** Es wurde weitergerechnet statt gerundet – die Antwort hat mehr
+Nachkommastellen als verlangt. Gilt auch, wenn der Wert sonst stimmt.
+
+**Beispiel:** Auf 2 Stellen runden, geantwortet wird 0,6666.
+
+**Rückmeldung:** „Du hast nicht gerundet, sondern weitergerechnet. Gefragt sind
+2 Stellen nach dem Komma."
+
+### `abgeschnitten-statt-gerundet`
+
+**Beschreibung:** Nach der geforderten Stelle wurde abgeschnitten, statt zu
+runden.
+
+**Beispiel:** 2/3 auf 2 Stellen wird zu 0,66 statt 0,67.
+
+**Rückmeldung:** „Du hast abgeschnitten statt gerundet. Schau dir die 3. Stelle
+an: ab 5 wird aufgerundet."
+
+### `vorperiode-als-periode`
+
+**Beschreibung:** Die Ziffern vor der Periode wurden für die Periode gehalten.
+
+**Beispiel:** 5/6 = 0,8333…, geantwortet wird 8 statt 3.
+
+**Rückmeldung:** „8 steht vor der Periode und wiederholt sich nicht. Gesucht
+sind die Ziffern, die immer wiederkommen."
+
+### `ganze-dezimalzahl-statt-periode`
+
+**Beschreibung:** Alles hinter dem Komma wurde angegeben, nicht nur der
+wiederkehrende Teil.
+
+**Beispiel:** 5/6 = 0,8333…, geantwortet wird 83.
+
+**Rückmeldung:** „Das ist die ganze Zahl hinter dem Komma. Gesucht ist nur der
+Teil, der sich wiederholt."
+
+### `nachkommastellen-als-zahl-verglichen`
+
+**Beschreibung:** Die Nachkommastellen wurden wie ganze Zahlen verglichen. Wird
+vor `groesser-kleiner-verwechselt` geprüft, weil es den Denkfehler wirklich
+benennt statt nur „andersherum" zu sagen.
+
+**Beispiel:** 0,25 gilt als größer als 0,5, weil 25 größer als 5 ist.
+
+**Rückmeldung:** „Nachkommastellen werden nicht wie ganze Zahlen verglichen. 0,5
+ist größer als 0,25, obwohl 25 größer als 5 ist."
+
+### `groesser-kleiner-verwechselt`
+
+**Beschreibung:** Das Vergleichszeichen zeigt in die falsche Richtung, ohne dass
+ein genauerer Denkfehler erkennbar ist.
+
+**Rückmeldung:** „Andersherum. Die Spitze des Zeichens zeigt immer zur kleineren
+Zahl."
+
+---
+
 ## Noch nicht umgesetzt
 
 Diese Fehler gehören zu Themen, die noch nicht gebaut sind. Sie stehen hier,
@@ -361,8 +465,10 @@ damit die Rückmeldungen später zusammenpassen. Sie haben bewusst keine eigene
 Überschrift mit ID – der Test prüft, dass jede ID im Katalog auch eine
 Beschreibung hat, und umgekehrt.
 
-- **gemischte Zahl falsch umgewandelt** (Phase 4): Der ganze Anteil wurde nicht
-  mit dem Nenner multipliziert. Beispiel: 2 3/4 wird zu 5/4 statt 11/4.
-- **Komma als Punkt** (Phase 4): Eine Dezimalzahl wurde mit Punkt statt Komma
-  eingegeben. Wird stillschweigend akzeptiert, damit die Tastatur kein Hindernis
-  ist; `core/fraction.ts` liest beides bereits ein.
+- **gemischte Zahl falsch umgewandelt**: Der ganze Anteil wurde nicht mit dem
+  Nenner multipliziert. Beispiel: 2 3/4 wird zu 5/4 statt 11/4. Gehört zu einem
+  Thema „gemischte Zahlen", das es noch nicht gibt.
+- **Komma als Punkt**: Eine Dezimalzahl wurde mit Punkt statt Komma eingegeben.
+  Wird bewusst stillschweigend akzeptiert, damit die Tastatur kein Hindernis
+  ist; `core/fraction.ts` liest beides ein. Deshalb gibt es dafür auch kein
+  Muster im Katalog.

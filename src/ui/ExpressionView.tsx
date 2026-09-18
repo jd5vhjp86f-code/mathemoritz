@@ -1,6 +1,7 @@
 import type { ExpressionPart } from '../topics/types.ts';
-import { formatDecimalText, formatMixedText } from '../core/format.ts';
+import { formatMixedText } from '../core/format.ts';
 import { FractionView, GapFractionView } from './FractionView.tsx';
+import { DecimalView } from './DecimalView.tsx';
 
 interface Props {
   readonly parts: readonly ExpressionPart[];
@@ -35,7 +36,7 @@ function PartView({ part }: { readonly part: ExpressionPart }) {
     case 'integer':
       return <span className="zahl">{part.value.toString()}</span>;
     case 'decimal':
-      return <span className="zahl">{formatDecimalText(part.value)}</span>;
+      return <DecimalView value={part.value} />;
     case 'operator':
       return <span className="operator">{part.symbol}</span>;
     case 'text':

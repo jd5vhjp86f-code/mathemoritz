@@ -17,8 +17,20 @@ import { LEVELS } from './types.ts';
 import { topics } from './index.ts';
 import { FEHLERMUSTER } from './fehlermuster.ts';
 import type { Fraction } from '../core/fraction.ts';
-import { add, erweitern, fraction, hauptnenner, kehrwert, mul, neg, sub } from '../core/fraction.ts';
-import { formatFractionText } from '../core/format.ts';
+import {
+  absBigInt,
+  add,
+  decimalExpansion,
+  erweitern,
+  fraction,
+  hasTerminatingDecimal,
+  hauptnenner,
+  kehrwert,
+  mul,
+  neg,
+  sub,
+} from '../core/fraction.ts';
+import { formatDecimalRounded, formatDecimalText, formatFractionText } from '../core/format.ts';
 import { createRandom } from '../learning/random.ts';
 
 import DOKU from '../../docs/FEHLERMUSTER.md?raw';
@@ -36,7 +48,11 @@ function alsEingabe(f: Fraction): string {
  * Schüler danebengreift, nicht, wie der Code das erkennt.
  */
 function proben(task: Task): string[] {
-  const eingaben = new Set<string>(['', '   ', 'abc', '0,5', '3/4', '0', '1', '999', '7/10', '1/1000']);
+  const eingaben = new Set<string>([
+    '', '   ', 'abc', '0,5', '3/4', '0', '1', '999', '7/10', '1/1000',
+    // Die drei Vergleichszeichen: bei allen anderen Themen schlicht unlesbar.
+    '<', '=', '>',
+  ]);
   const a = task.given.a;
   const b = task.given.b;
   const aufgabe = task.given.aufgabe;
@@ -102,6 +118,36 @@ function proben(task: Task): string[] {
     }
   }
 
+  // Brüche und Dezimalzahlen: Stellenwert-Fehlgriffe.
+  const aufgabeF = aufgabe;
+  if (aufgabeF !== undefined && task.topicId === 'bruch-dezimal') {
+    const e = decimalExpansion(aufgabeF);
+    const zaehler = absBigInt(aufgabeF.n).toString();
+
+    // Komma verrutscht
+    eingaben.add(formatDecimalText(mul(task.solution, fraction(10n, 1n))));
+    eingaben.add(formatDecimalText(mul(task.solution, fraction(1n, 10n))));
+    // Zähler hinter das Komma geschrieben
+    eingaben.add(formatDecimalText(fraction(BigInt(zaehler), 10n ** BigInt(zaehler.length))));
+    // Andersherum geteilt - nur, wenn das überhaupt aufgeht
+    if (aufgabeF.n !== 0n && hasTerminatingDecimal(kehrwert(aufgabeF))) {
+      eingaben.add(formatDecimalText(kehrwert(aufgabeF)));
+    }
+    // Periode: Vorperiode und alles hinter dem Komma
+    if (e.preperiod !== '') eingaben.add(e.preperiod);
+    eingaben.add(`${e.preperiod}${e.period}`);
+
+    const einheit = task.given.einheit;
+    if (einheit !== undefined) {
+      const stellen = einheit.d.toString().length - 1;
+      // Nicht gerundet, sondern weitergerechnet
+      eingaben.add(formatDecimalRounded(aufgabeF, stellen + 2));
+      // Abgeschnitten statt gerundet
+      const skala = 10n ** BigInt(stellen);
+      eingaben.add(formatDecimalText(fraction((absBigInt(aufgabeF.n) * skala) / aufgabeF.d, skala)));
+    }
+  }
+
   return [...eingaben];
 }
 
@@ -127,7 +173,7 @@ describe('Fehlermuster und Doku', () => {
 
   it('beschreibt jedes Muster aus dem Katalog in der Doku', () => {
     const fehlend = FEHLERMUSTER.filter((muster) => !DOKU.includes(`### \`${muster}\``));
-    expect(fehlend).toEqual([]);
+    expect(fehlend.join(', ')).toBe('');
   });
 
   it('gibt zu jedem Muster eine Rückmeldung an', () => {
@@ -150,7 +196,8 @@ describe('Fehlermuster und Doku', () => {
 
   it('erreicht jedes Muster aus dem Katalog mit echten Antworten', () => {
     const nieGemeldet = FEHLERMUSTER.filter((muster) => !gemeldet.has(muster));
-    expect(nieGemeldet).toEqual([]);
+    // Als Text, damit der Fehlerbericht die Namen zeigt statt einer gekürzten Liste.
+    expect(nieGemeldet.join(', ')).toBe('');
   });
 });
 

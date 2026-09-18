@@ -83,6 +83,20 @@ export function formatDecimalRounded(f: Fraction, digits: number): string {
   return `${sign}${e.integerPart.toString()},${decimals}`;
 }
 
+/**
+ * Dezimalzahl zum Vorlesen: "0,8 Periode 3".
+ *
+ * Der Overline-Strich aus `formatDecimalText` ist für Screenreader wertlos -
+ * er wird entweder verschluckt oder als Sonderzeichen buchstabiert. Deshalb
+ * wird die Periode hier ausgeschrieben.
+ */
+export function formatDecimalSpoken(f: Fraction): string {
+  const e = decimalExpansion(f);
+  const base = decimalBase(e);
+  if (e.period === '') return base;
+  return `${base} Periode ${e.period}`;
+}
+
 function decimalBase(e: DecimalExpansion): string {
   const sign = e.sign === -1 ? '-' : '';
   const head = e.integerPart.toString();

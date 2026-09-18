@@ -14,7 +14,7 @@ import type { Level, OperatorSymbol, Task } from '../types.ts';
 import type { Fraction } from '../../core/fraction.ts';
 import { add, compare, fraction, hauptnenner, lcm, sub } from '../../core/fraction.ts';
 import { formatFractionText } from '../../core/format.ts';
-import { baueRechenaufgabe } from '../aufgabe.ts';
+import { baueRechenaufgabe, waehleVariante } from '../aufgabe.ts';
 import { pick, randomInt } from '../../learning/random.ts';
 
 export const TOPIC_ID = 'brueche-addieren';
@@ -91,9 +91,9 @@ export function levelBounds(level: Level): LevelBounds {
   return { maxHauptnenner: config.maxHauptnenner, maxZaehler: 2 * config.maxHauptnenner };
 }
 
-export function generate(level: Level, random: () => number): Task {
+export function generate(level: Level, random: () => number, gewuenscht?: string): Task {
   const config = CONFIG[level];
-  const variant = pick(random, config.variants);
+  const variant = waehleVariante(config.variants, gewuenscht, random);
   const [d1, d2] = pick(random, config.paare);
 
   // Echte Brüche: Zähler kleiner als der eigene Nenner.
@@ -227,4 +227,9 @@ function vielfacheListe(zahl: number, bis: number): string {
   const werte: string[] = [];
   for (let v = zahl; v <= bis || werte.length < 3; v += zahl) werte.push(v.toString());
   return werte.join(', ');
+}
+
+/** Die Varianten dieser Stufe. */
+export function variants(level: Level): readonly string[] {
+  return CONFIG[level].variants;
 }
