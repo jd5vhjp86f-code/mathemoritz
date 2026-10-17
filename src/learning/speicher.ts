@@ -1,9 +1,9 @@
 /**
- * Speicherung des Lernfortschritts - ausschließlich lokal.
+ * Speicherung des Lernfortschritts auf dem Gerät.
  *
- * Nichts davon verlässt das Gerät. Es gibt keinen Server, keine Anmeldung und
- * keine Kennung; gespeichert wird, welche Aufgabenart wie sicher sitzt, sonst
- * nichts.
+ * Gespeichert wird, welche Aufgabenart wie sicher sitzt, sonst nichts. Der
+ * optionale Abgleich zwischen Geräten liegt als eigene Schicht darüber
+ * (`sync.ts`); dieser Speicher selbst bleibt rein lokal.
  *
  * Beim Laden wird streng geprüft. Was auf der Platte liegt, kann von einer
  * älteren Fassung stammen, von Hand verändert oder halb geschrieben worden
