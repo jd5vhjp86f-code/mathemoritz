@@ -3,7 +3,9 @@
 Übungs-App für Mathematik, Gymnasium Klasse 7. Schwerpunkt Bruchrechnen.
 
 Läuft im Browser, funktioniert dank Service Worker auch ohne Empfang,
-speichert ausschließlich lokal und schickt keine Daten nach außen.
+speichert lokal. Nur wenn auf einem Gerät der Familien-Code eingegeben wurde,
+wird der Lernfortschritt (ohne Namen) über den eigenen LernSync-Server
+zwischen den Geräten der Familie abgeglichen (`src/learning/sync.ts`).
 
 Bewegung, Töne und Serien lassen sich in der App einzeln abschalten;
 `prefers-reduced-motion` wird ohnehin respektiert.

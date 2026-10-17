@@ -4,8 +4,9 @@
 
 Eine Übungs-App für Bruchrechnen und angrenzende Themen der Klasse 7
 (Gymnasium). Zielnutzer ist ein 12-jähriger Schüler. Die App läuft im
-Browser, funktioniert offline, speichert nur lokal und schickt nichts nach
-außen.
+Browser, funktioniert offline und speichert lokal. Einzige Ausnahme: der
+optionale Abgleich des Lernfortschritts über den eigenen LernSync-Server
+(siehe CLAUDE.md, Abschnitt Datenschutz).
 
 ## Leitplanken
 
