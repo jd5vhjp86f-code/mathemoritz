@@ -1,9 +1,13 @@
 import type { Einstellungen } from '../learning/einstellungen.ts';
+import type { SyncSpeicher } from '../learning/sync.ts';
+import { GeraeteVerbinden } from './GeraeteVerbinden.tsx';
 
 interface Props {
   readonly einstellungen: Einstellungen;
   readonly setze: <K extends keyof Einstellungen>(name: K, wert: Einstellungen[K]) => void;
   readonly onBack: () => void;
+  /** Fehlt er, wird der Bereich „Geräte verbinden" nicht gezeigt. */
+  readonly sync?: SyncSpeicher;
 }
 
 interface Schalter {
@@ -31,7 +35,7 @@ const SCHALTER: readonly Schalter[] = [
 ];
 
 /** Einstellungen: alles, was stört, lässt sich hier abschalten. */
-export function EinstellungenAnsicht({ einstellungen, setze, onBack }: Props) {
+export function EinstellungenAnsicht({ einstellungen, setze, onBack, sync }: Props) {
   return (
     <div className="fortschritt">
       <div className="uebung__kopf">
@@ -66,6 +70,8 @@ export function EinstellungenAnsicht({ einstellungen, setze, onBack }: Props) {
         Wenn dein Gerät eingestellt hat, dass es weniger Bewegung zeigen soll, hält sich die App auch ohne diesen
         Schalter daran.
       </p>
+
+      {sync ? <GeraeteVerbinden sync={sync} /> : null}
     </div>
   );
 }

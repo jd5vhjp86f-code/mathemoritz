@@ -689,3 +689,37 @@ body {
   animation-iteration-count: 1 !important;
   transition-duration: 0.01ms !important;
 }
+
+/* --- Geräte verbinden --------------------------------------------- */
+
+.verbinden {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.verbinden h3 {
+  margin: 0;
+}
+
+.verbinden__zeile {
+  display: flex;
+  gap: 8px;
+}
+
+.verbinden__eingabe {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch-ziel);
+  padding: 0 12px;
+  font: inherit;
+  color: var(--farbe-text);
+  background: var(--farbe-hintergrund);
+  border: 1px solid var(--farbe-rand);
+  border-radius: var(--radius);
+}
+
+.verbinden .knopf--klein {
+  align-self: flex-start;
+}

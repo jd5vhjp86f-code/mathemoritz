@@ -91,8 +91,8 @@ export function FortschrittAnsicht({ fortschritt, onBack, onLoeschen }: Props) {
       <section className="card daten">
         <h3>Deine Daten</h3>
         <p>
-          Alles bleibt auf diesem Gerät. Nichts wird hochgeladen, und es wird nur gespeichert, welche Aufgabenart wie
-          sicher sitzt.
+          Gespeichert wird nur, welche Aufgabenart wie sicher sitzt – auf diesem Gerät. Haben deine Eltern eure Geräte
+          verbunden, wird genau das (ohne Namen) zwischen euren Geräten abgeglichen. Sonst wird nichts hochgeladen.
         </p>
         {loeschStatus === 'ruht' ? null : (
           <p className="loeschstand" role="status">

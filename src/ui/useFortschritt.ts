@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Baustein, Ergebnis, Fortschritt } from '../learning/fortschritt.ts';
 import { LEERER_FORTSCHRITT, aktualisiere, aufraeumen } from '../learning/fortschritt.ts';
 import type { Speicher } from '../learning/speicher.ts';
+import type { SyncSpeicher } from '../learning/sync.ts';
 import { ersterSpeicher } from '../learning/speicher.ts';
 import { topics } from '../topics/index.ts';
 
@@ -38,8 +39,14 @@ export function useFortschritt(speicher: Speicher = ersterSpeicher()): Fortschri
       if (geladener !== null) setFortschritt(aufraeumen(geladener, topics));
       setGeladen(true);
     });
+    // Kommt ein neuerer Stand von einem anderen Gerät, wird er übernommen.
+    const sync = speicherRef.current as Partial<SyncSpeicher>;
+    const abmelden = sync.beiNeuemStand?.((stand) => {
+      if (!abgebrochen) setFortschritt(aufraeumen(stand, topics));
+    });
     return () => {
       abgebrochen = true;
+      abmelden?.();
     };
   }, []);
 

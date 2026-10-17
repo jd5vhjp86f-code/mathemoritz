@@ -252,12 +252,12 @@ describe('Fortschritts-Ansicht', () => {
     expect(markup).not.toContain('disabled');
   });
 
-  it('sagt klar, dass nichts das Gerät verlässt', () => {
+  it('sagt klar, was gespeichert und wann etwas abgeglichen wird', () => {
     const markup = renderToStaticMarkup(
       <FortschrittAnsicht fortschritt={geuebt} onBack={leer} onLoeschen={leer} />,
     );
     expect(markup).toContain('auf diesem Gerät');
-    expect(markup).toContain('Nichts wird hochgeladen');
+    expect(markup).toContain('Sonst wird nichts hochgeladen');
   });
 
   it('beschreibt den Balken für Screenreader', () => {

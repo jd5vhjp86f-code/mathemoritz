@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { TopicModule } from '../topics/types.ts';
 import { topics } from '../topics/index.ts';
 import { TopicList } from './TopicList.tsx';
@@ -7,6 +7,8 @@ import { FortschrittAnsicht } from './Fortschritt.tsx';
 import { EinstellungenAnsicht } from './Einstellungen.tsx';
 import { useFortschritt } from './useFortschritt.ts';
 import { useEinstellungen } from './useEinstellungen.ts';
+import { ersterSpeicher } from '../learning/speicher.ts';
+import { syncSpeicher } from '../learning/sync.ts';
 
 type Ansicht =
   | { readonly art: 'themen' }
@@ -20,7 +22,24 @@ type Ansicht =
  */
 export function App() {
   const [ansicht, setAnsicht] = useState<Ansicht>({ art: 'themen' });
-  const fortschritt = useFortschritt();
+  const [sync] = useState(() => syncSpeicher(ersterSpeicher()));
+  const fortschritt = useFortschritt(sync);
+
+  // Beim Verlassen oder Wegklicken ausstehende Änderungen sofort senden.
+  useEffect(() => {
+    const senden = () => {
+      void sync.jetztSenden(true);
+    };
+    const sichtbarkeit = () => {
+      if (document.visibilityState === 'hidden') senden();
+    };
+    window.addEventListener('pagehide', senden);
+    document.addEventListener('visibilitychange', sichtbarkeit);
+    return () => {
+      window.removeEventListener('pagehide', senden);
+      document.removeEventListener('visibilitychange', sichtbarkeit);
+    };
+  }, [sync]);
   const { einstellungen, setze } = useEinstellungen();
 
   return (
@@ -77,6 +96,7 @@ export function App() {
         <EinstellungenAnsicht
           einstellungen={einstellungen}
           setze={setze}
+          sync={sync}
           onBack={() => {
             setAnsicht({ art: 'themen' });
           }}
@@ -94,7 +114,7 @@ export function App() {
       ) : null}
 
       <footer className="app__footer">
-        <p>Läuft offline. Keine Daten verlassen dieses Gerät.</p>
+        <p>Läuft offline. Nur mit Familien-Code wird der Fortschritt zwischen euren Geräten abgeglichen.</p>
       </footer>
     </main>
   );
